@@ -1,0 +1,3 @@
+# from cellpose_napari import threshold, image_arithmetic
+
+# add your tests here...
