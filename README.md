@@ -23,8 +23,6 @@ The plugin code was written by Carsen Stringer, and the cellpose code was writte
 For support with the plugin, please open an [issue](https://github.com/MouseLand/cellpose-napari/issues). For support with cellpose, please open an [issue](https://github.com/MouseLand/cellpose/issues) on the cellpose repo. 
 
 ![cellpose-napari_plugin](docs/_static/napari_main_demo_fast_small.gif?raw=true "cellpose-napari")
-<img src="docs/_static/napari_main_demo_fast_small.gif" width="400" title="cellpose-napari" alt="cellpose-napari_plugin" vspace = "50">
-
 
 ## Installation
 
@@ -82,6 +80,7 @@ Follow steps from above to install the dependencies. In the github repository, r
 
 ## Running the software
 
+
 Open napari with the cellpose-napari dock widget open
 ```
 napari -w cellpose-napari
@@ -89,7 +88,7 @@ napari -w cellpose-napari
 
 There is sample data in the File menu, or get started with your own images!
 
-See the [documentation](https://cellpose-napari.readthedocs.io/) for more information.
+### Detailed usage [documentation](https://cellpose-napari.readthedocs.io/).
 
 ## Contributing
 
