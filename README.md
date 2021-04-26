@@ -22,6 +22,8 @@ The plugin code was written by Carsen Stringer, and the cellpose code was writte
 
 For support with the plugin, please open an [issue](https://github.com/MouseLand/cellpose-napari/issues). For support with cellpose, please open an [issue](https://github.com/MouseLand/cellpose/issues) on the cellpose repo. 
 
+<img src="docs/_static/napari_main_demo_fast_small" width="400" title="cellpose-napari" alt="cellpose-napari_plugin" vspace = "50">
+
 
 ## Installation
 
@@ -43,14 +45,14 @@ If you have **issues** with cellpose installation, see the [cellpose docs](https
 ### Upgrading software
 
 You can upgrade the plugin with
-```
+~~~
 pip install cellpose-napari --upgrade
-```
+~~~
 
 and you can upgrade cellpose with
-```
+~~~
 pip install cellpose --upgrade
-```
+~~~
 
 ### GPU version (CUDA) on Windows or Linux
 
@@ -86,6 +88,7 @@ napari -w cellpose-napari
 
 There is sample data in the File menu, or get started with your own images!
 
+See the [documentation](https://cellpose-napari.readthedocs.io/) for more information.
 
 ## Contributing
 
