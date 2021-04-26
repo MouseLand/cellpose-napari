@@ -20,7 +20,7 @@ algorithm and the settings.
 
 .. toctree::
    :maxdepth: 3
-   :caption Basics:   
+   :caption: Basics:   
    installation
    running
    settings
