@@ -16,8 +16,8 @@ def test_something_with_viewer(widget_name, make_napari_viewer):
    )
    assert len(viewer.window._dock_widgets) == num_dw + 1
 
-@pytest.mark.parametrize("widget_name", MY_WIDGET_NAMES)
-def test_sample_data_with_viewer(widget_name, make_napari_viewer):
-   viewer = make_napari_viewer()
-   viewer.open_sample('cellpose-napari', 'rgb_3D.tif')
-   assert len(viewer.layers) == 1
+#@pytest.mark.parametrize("widget_name", MY_WIDGET_NAMES)
+#def test_sample_data_with_viewer(widget_name, make_napari_viewer):
+#   viewer = make_napari_viewer()
+#   viewer.open_sample('cellpose-napari', 'rgb_3D.tif')
+#   assert len(viewer.layers) == 1
