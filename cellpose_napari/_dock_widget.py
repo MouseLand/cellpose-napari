@@ -158,14 +158,15 @@ def widget_wrapper():
                 clear_previous_segmentations,
                 output_flows,
                 output_outlines):
-
         if not hasattr(widget, 'cellpose_layers'):
             widget.cellpose_layers = []
         
         if clear_previous_segmentations:
-            for layer in viewer.layers:
-                if any([cp_string in layer.name for cp_string in cp_strings]):
-                    viewer.layers.remove(layer)
+            layer_names = [layer.name for layer in viewer.layers]
+            for layer_name in layer_names:
+                logger.info(layer_name)
+                if any([cp_string in layer_name for cp_string in cp_strings]):
+                    viewer.layers.remove(viewer.layers[layer_name])
             widget.cellpose_layers = []
 
         def _new_layers(masks, flows_orig):
@@ -250,56 +251,58 @@ def widget_wrapper():
         cp_worker.returned.connect(_new_segmentation)
         cp_worker.start()
         
-        def update_masks(maski):
-            outlines = masks_to_outlines(maski) * maski  
-            viewer.layers[image_layer.name + '_masks' + widget.iseg].data = maski
-            viewer.layers[image_layer.name + '_outlines' + widget.iseg].data = outlines
-            widget.masks_orig = maski
-            logger.info('masks updated')
-            
-        @widget.compute_masks_button.changed.connect 
-        def _compute_masks(event):
-            mask_worker = compute_masks(widget.masks_orig, 
-                                        widget.flows_orig, 
-                                        widget.cellprob_threshold.value, 
-                                        widget.model_match_threshold.value)
-            mask_worker.returned.connect(update_masks)
-            mask_worker.start()
-
-        def _report_diameter(diam):
-            widget.diameter.value = diam
-            logger.info(f'computed diameter = {diam}')
-
         
-        @widget.compute_diameter_button.changed.connect 
-        def _compute_diameter(event):
-            if widget.model_type.value == 'custom':
-                logger.error('cannot compute diameter for custom model')
-            else:
-                model_type = widget.model_type.value
-                channels = [max(0, widget.main_channel.value), max(0, widget.optional_nuclear_channel.value)],
-                image = widget.image_layer.value.data
-                diam_worker = compute_diameter(image, channels, model_type)
-                diam_worker.returned.connect(_report_diameter)
-                diam_worker.start()
-            ### TODO 3D images
-
-        @widget.compute_diameter_shape.changed.connect 
-        def _compute_diameter_shape(event):
-            diam = 0
-            k=0
-            for d in widget.shape_layer.value.data:
-                if len(d)==4:
-                    diam += np.ptp(d, axis=0)[-2:].sum()
-                    k+=2
-            diam /= k
-            diam *= (27/30)
-            if k>0:
-                _report_diameter(diam)
-            else:
-                logging.error('no square or circle shapes created')
-
         pass
+
+    def update_masks(maski):
+        outlines = masks_to_outlines(maski) * maski  
+        widget.viewer.value.layers[widget.image_layer.value.name + '_cp_masks' + widget.iseg].data = maski
+        widget.viewer.value.layers[widget.image_layer.value.name + '_cp_outlines' + widget.iseg].data = outlines
+        widget.masks_orig = maski
+        logger.info('masks updated')
+
+
+    @widget.compute_masks_button.changed.connect 
+    def _compute_masks(event):
+        mask_worker = compute_masks(widget.masks_orig, 
+                                    widget.flows_orig, 
+                                    widget.cellprob_threshold.value, 
+                                    widget.model_match_threshold.value)
+        mask_worker.returned.connect(update_masks)
+        mask_worker.start()
+
+    def _report_diameter(diam):
+        widget.diameter.value = diam
+        logger.info(f'computed diameter = {diam}')
+    
+    @widget.compute_diameter_button.changed.connect 
+    def _compute_diameter(event):
+        print('button clicked')
+        if widget.model_type.value == 'custom':
+            logger.error('cannot compute diameter for custom model')
+        else:
+            model_type = widget.model_type.value
+            channels = [max(0, widget.main_channel.value), max(0, widget.optional_nuclear_channel.value)],
+            image = widget.image_layer.value.data
+            diam_worker = compute_diameter(image, channels, model_type)
+            diam_worker.returned.connect(_report_diameter)
+            diam_worker.start()
+        ### TODO 3D images
+
+    @widget.compute_diameter_shape.changed.connect 
+    def _compute_diameter_shape(event):
+        diam = 0
+        k=0
+        for d in widget.shape_layer.value.data:
+            if len(d)==4:
+                diam += np.ptp(d, axis=0)[-2:].sum()
+                k+=2
+        diam /= k
+        diam *= (27/30)
+        if k>0:
+            _report_diameter(diam)
+        else:
+            logging.error('no square or circle shapes created')
 
     return widget            
 
