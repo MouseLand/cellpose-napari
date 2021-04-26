@@ -15,7 +15,7 @@ jobs:
 install:
 - conda env create -f environment.yml
 - source activate cellpose_napari
-- pip install -e .
+- pip install .
 script:
 - coverage run --source=cellpose_napari setup.py test
 after_success: coveralls

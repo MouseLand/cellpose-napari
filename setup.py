@@ -36,7 +36,7 @@ setup(
     use_scm_version=True,
     install_requires=requirements,
     setup_requires=['setuptools_scm', 'pytest-runner'],
-    tests_require=['pytest', 'pytest-qt']
+    tests_require=['pytest', 'pytest-qt'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
