@@ -8,10 +8,10 @@ Welcome to cellpose-napari's documentation!
 
 cellpose-napari is a plugin to enable usage of cellpose in napari.
 
-.. image:: _static/fig1.PNG
+.. image:: _static/plugin.PNG
     :width: 1200px
     :align: center
-    :alt: fig1
+    :alt: plugin
 
 Please see cellpose `documentation`_ for more information on the 
 algorithm and the settings.
@@ -22,8 +22,6 @@ Contents:
 
 .. toctree::
    :maxdepth: 2
-
-
 
 Indices and tables
 ==================

@@ -16,6 +16,7 @@ install:
 - conda env create -f environment.yml
 - source activate cellpose_napari
 - pip install .
+- pip install coveralls
 script:
 - coverage run --source=cellpose_napari setup.py test
 after_success: coveralls

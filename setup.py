@@ -6,21 +6,8 @@ import codecs
 from setuptools import setup, find_packages
 
 
-def read(fname):
-    file_path = os.path.join(os.path.dirname(__file__), fname)
-    return codecs.open(file_path, encoding='utf-8').read()
-
-
-# Add your dependencies in requirements.txt
-# Note: you can add test-specific requirements in tox.ini
-requirements = []
-with open('requirements.txt') as f:
-    for line in f:
-        stripped = line.split("#")[0].strip()
-        if len(stripped) > 0:
-            requirements.append(stripped)
-
-
+with open("README.md", "r") as fh:
+    long_description = fh.read()
 
 setup(
     name='cellpose-napari',
@@ -29,19 +16,25 @@ setup(
     license='BSD-3',
     url='https://github.com/carsen-stringer/cellpose-napari',
     description='a generalist algorithm for anatomical segmentation',
-    long_description=read('README.md'),
+    long_description=long_description,
     long_description_content_type='text/markdown',
-    packages=find_packages(),
+    packages=setuptools.find_packages(),
     python_requires='>=3.6',
     use_scm_version=True,
     install_requires=requirements,
     setup_requires=['setuptools_scm', 'pytest-runner'],
     tests_require=['pytest', 'pytest-qt'],
+    extras_require={
+      "docs": [
+        'sphinx>=3.0',
+        'sphinxcontrib-apidoc',
+        'sphinx_rtd_theme',
+        'sphinx-prompt',
+        'sphinx-autodoc-typehints',
+      ]
+    },
+    include_package_data=True,
     classifiers=[
-        'Development Status :: 4 - Beta',
-        'Intended Audience :: Developers',
-        'Framework :: napari',
-        'Topic :: Software Development :: Testing',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.7',
