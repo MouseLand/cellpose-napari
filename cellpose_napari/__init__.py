@@ -4,4 +4,4 @@ except ImportError:
     __version__ = "unknown"
 
 from ._dock_widget import napari_experimental_provide_dock_widget
-from ._sample_data import napari_hook_implementation
+from ._sample_data import napari_provide_sample_data
