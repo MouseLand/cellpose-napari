@@ -22,7 +22,7 @@ setup(
     description='a generalist algorithm for anatomical segmentation',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    packages=setuptools.find_packages(),
+    packages=find_packages(),
     python_requires='>=3.6',
     use_scm_version=True,
     install_requires=install_deps,
