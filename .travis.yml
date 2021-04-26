@@ -1,0 +1,31 @@
+language: python
+jobs:
+  include:
+  - name: Python 3.7.1 on Linux
+    dist: xenial
+    services:
+    - xvfb
+    python: 3.7
+    before_install:
+    - wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O
+      miniconda.sh
+    - bash ./miniconda.sh -b
+    - export PATH=~/miniconda3/bin:$PATH
+    - conda update --yes conda
+install:
+- conda env create -f environment.yml
+- source activate cellpose_napari
+- pip install .
+script:
+- coverage run --source=cellpose_napari setup.py test
+after_success: coveralls
+deploy:
+  skip_cleanup: true
+  skip_existing: true
+  provider: pypi
+  deploy: 
+  username: __token__
+  password:
+    secure: kZq8ajK/kOK2fAlkeRHYcavflZ17Oe7rqMm6lVVdyRTNAb0BmWEz04XKCTk18fi3apQsC8MWETKveyGaXLsf0VJRlmOt+XRb2NnJAAg8Rzsr6N4a1wpK263Lp+IIgAJJdWGl+6KF1D96KpZcsK+tMiTBfJvF1uV4hUSloK0CtpOz/GRrPBDbTl2aQUVBz9dRYAaPZqq+oLBTOLnr4ySJpeligXoYB9JMLYQYKuL2FQX4wd0Xf2VgrAh4tei+OnwC8XPXbqR3gAIcVl2dvKwSjXfuhXv6WMPNqAY/yA8wY5j5uEfOi+iPLEU2Ya/+TWy02CI8QxyCqBGtbwLgR658haV/nebgEOHAwaDaYQdYbiEegU6rp+LIgaEX+jKzG3QSW0OLD9xYZ81zTiBBCyIysL2bUe+c/C1RSHAIAFZb9DZayiKAUEVICM2JHi9XsT+LwErDt+gVLOChwk74wGEBDsLCfOkcddTi4yzwpGzUyhrw/oHQi0fYjblGpfF8STEKWl8tvHDgAqwjz2BHAfqB8TOzExc46myi4MKnEKSfwM973ZGk3pbg5qm7oJbiBqmUpsurf84q0tBZDjP3eLsBnfpDiP5bY0wfsQX5MYv/iOwPkD0+m/TLYeV0REhNEVsCFk5KGLFMVagChFQ2CqerxnCI+gtCQC0sY56X4MfMZxo=
+  on:
+    tags: true

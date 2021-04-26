@@ -33,9 +33,10 @@ setup(
     long_description_content_type='text/markdown',
     packages=find_packages(),
     python_requires='>=3.6',
-    version=0.1,
+    use_scm_version=True,
     install_requires=requirements,
-    setup_requires=['setuptools_scm'],
+    setup_requires=['setuptools_scm', 'pytest-runner'],
+    tests_require=['pytest', 'pytest-qt']
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
