@@ -1,6 +1,6 @@
 name: cellpose_napari
 dependencies:
-  - python>3.4
+  - python>3.4,<3.9
   - pip
   - pip:
     - PyQt5
