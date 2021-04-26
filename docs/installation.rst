@@ -55,36 +55,5 @@ OS are fine. The software has been heavily tested on Windows 10 and
 Ubuntu 18.04, and less well tested on Mac OS. Please post an issue if
 you have installation problems.
 
-
-Dependencies
-~~~~~~~~~~~~~~~~~~~~~~
-
-cellpose relies on the following excellent packages (which are
-automatically installed with conda/pip if missing):
-
--  `mxnet_mkl`_
--  `pyqtgraph`_
--  `PyQt5`_
--  `numpy`_ (>=1.16.0)
--  `numba`_
--  `scipy`_
--  `scikit-image`_
--  `natsort`_
--  `matplotlib`_
-
 .. _readme: http://github.com/mouseland/cellpose
 .. _install: https://napari.org/tutorials/fundamentals/installation.html
-
-.. _Anaconda: https://www.anaconda.com/download/
-.. _environment.yml: https://github.com/MouseLand/cellpose/blob/master/environment.yml?raw=true
-.. _here: https://pypi.org/project/cellpose/
-
-.. _mxnet_mkl: https://mxnet.apache.org/
-.. _pyqtgraph: http://pyqtgraph.org/
-.. _PyQt5: http://pyqt.sourceforge.net/Docs/PyQt5/
-.. _numpy: http://www.numpy.org/
-.. _numba: http://numba.pydata.org/numba-doc/latest/user/5minguide.html
-.. _scipy: https://www.scipy.org/
-.. _scikit-image: https://scikit-image.org/
-.. _natsort: https://natsort.readthedocs.io/en/master/
-.. _matplotlib: https://matplotlib.org/
