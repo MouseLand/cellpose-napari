@@ -1,7 +1,7 @@
 # cellpose-napari <img src="docs/_static/favicon.ico" width="50" title="cellpose" alt="cellpose" align="right" vspace = "50">
 
 [![Documentation Status](https://readthedocs.org/projects/cellpose-napari/badge/?version=latest)](https://cellpose-napari.readthedocs.io/en/latest/?badge=latest)
-[![Build Status](https://travis-ci.org/MouseLand/cellpose-napari.svg?branch=main)](https://travis-ci.org/MouseLand/cellpose)
+[![tests](https://github.com/mouseland/cellpose-napari/workflows/tests/badge.svg)](https://github.com/mouseland/cellpose-napari/actions)
 [![codecov](https://codecov.io/gh/Mouseland/cellpose-napari/branch/main/graph/badge.svg)](https://codecov.io/gh/MouseLand/cellpose-napari)
 [![PyPI version](https://badge.fury.io/py/cellpose-napari.svg)](https://badge.fury.io/py/cellpose-napari)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/cellpose-napari)](https://pypistats.org/packages/cellpose-napari)
