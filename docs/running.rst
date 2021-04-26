@@ -11,7 +11,7 @@ advanced image loading.
 
 Here is an example of the plugin running on the 2D sample image.
 
-.. image:: _static/napari_3d_demo_fast_small.gif
+.. image:: _static/napari_main_demo_fast_small.gif
     :width: 1200px
     :align: center
     :alt: 3D_demo
@@ -40,9 +40,11 @@ axis, specify it by labelling it with 'c'.
 To run 3D processing, check ``process stack as 3D``.
 
 If the 3D segmentation is not working well and there is inhomogeneity in Z, try stitching 
-masks using the ``stitch threshold slices`` option, 
-instead of checking ``process stack as 3D``. See details for this option here: 
-`stitch_threshold`_.
+masks using the ``stitch threshold slices`` option
+instead of checking ``process stack as 3D``. In this setting, 
+cellpose will create masks in 2D on each XY slice and then stitch them across 
+slices if the IoU between the mask on the current slice and the next slice is 
+greater than or equal to the ``stitch threshold slices``. 
 
 Here is an example of the plugin running on the 3D sample image.
 
@@ -54,7 +56,7 @@ Here is an example of the plugin running on the 3D sample image.
 Time segmentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Stitching can also be applied in time.
+Stitching can also be applied in time by setting ``stitch threshold slices``>0.
 
 Here is an example of the plugin running on cell tracking challenge data.
 
