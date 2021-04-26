@@ -2,7 +2,7 @@
 
 [![Documentation Status](https://readthedocs.org/projects/cellpose-napari/badge/?version=latest)](https://cellpose-napari.readthedocs.io/en/latest/?badge=latest)
 [![Build Status](https://travis-ci.org/MouseLand/cellpose-napari.svg?branch=main)](https://travis-ci.org/MouseLand/cellpose)
-[![Coverage Status](https://coveralls.io/repos/github/MouseLand/cellpose-napari/badge.svg?branch=main)](https://coveralls.io/github/MouseLand/cellpose-napari?branch=maain)
+[![codecov](https://codecov.io/gh/Mouseland/cellpose-napari/branch/main/graph/badge.svg)](https://codecov.io/gh/MouseLand/cellpose-napari)
 [![PyPI version](https://badge.fury.io/py/cellpose-napari.svg)](https://badge.fury.io/py/cellpose-napari)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/cellpose-napari)](https://pypistats.org/packages/cellpose-napari)
 [![Python version](https://img.shields.io/pypi/pyversions/cellpose-napari)](https://pypistats.org/packages/cellpose-napari)
