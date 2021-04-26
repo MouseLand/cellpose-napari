@@ -1,0 +1,4 @@
+napari-plugin-engine
+cellpose
+imagecodecs
+numpy
