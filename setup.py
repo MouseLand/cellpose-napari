@@ -6,6 +6,10 @@ import codecs
 from setuptools import setup, find_packages
 
 
+install_deps = ['napari-plugin-engine>=0.1.4',
+                'cellpose',
+                'imagecodecs']
+
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
@@ -21,7 +25,7 @@ setup(
     packages=setuptools.find_packages(),
     python_requires='>=3.6',
     use_scm_version=True,
-    install_requires=requirements,
+    install_requires=install_deps,
     setup_requires=['setuptools_scm', 'pytest-runner'],
     tests_require=['pytest', 'pytest-qt'],
     extras_require={
