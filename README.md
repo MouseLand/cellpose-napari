@@ -18,9 +18,25 @@ a napari plugin for anatomical segmentation of general cellular images
 
 This [napari] plugin was generated with [Cookiecutter] using with [@napari]'s [cookiecutter-napari-plugin] template.
 
-The plugin code was written by Carsen Stringer, and the cellpose code was written by Carsen Stringer and Marius Pachitariu. To learn about Cellpose, read the [paper](https://t.co/kBMXmPp3Yn?amp=1) or watch this [talk](https://t.co/JChCsTD0SK?amp=1). 
+The plugin code was written by Carsen Stringer, and the cellpose code was written by Carsen Stringer and Marius Pachitariu. To learn about Cellpose, read the [**paper**](https://t.co/kBMXmPp3Yn?amp=1) or watch this [**talk**](https://t.co/JChCsTD0SK?amp=1). 
 
 For support with the plugin, please open an [issue](https://github.com/MouseLand/cellpose-napari/issues). For support with cellpose, please open an [issue](https://github.com/MouseLand/cellpose/issues) on the cellpose repo. 
+
+
+If you use this plugin please cite the [paper](https://www.nature.com/articles/s41592-020-01018-x):
+::
+    
+      @article{stringer2021cellpose,
+      title={Cellpose: a generalist algorithm for cellular segmentation},
+      author={Stringer, Carsen and Wang, Tim and Michaelos, Michalis and Pachitariu, Marius},
+      journal={Nature Methods},
+      volume={18},
+      number={1},
+      pages={100--106},
+      year={2021},
+      publisher={Nature Publishing Group}
+      }
+
 
 ![cellpose-napari_plugin](docs/_static/napari_main_demo_fast_small.gif?raw=true "cellpose-napari")
 
