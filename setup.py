@@ -46,6 +46,7 @@ setup(
         'Programming Language :: Python :: 3.9',
         'Operating System :: OS Independent',
         'License :: OSI Approved :: BSD License',
+        'Framework :: napari',
     ],
     entry_points={
         'napari.plugin': [
