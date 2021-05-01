@@ -16,15 +16,15 @@ from napari.layers import Image, Shapes
 from napari_plugin_engine import napari_hook_implementation
 from magicgui import magicgui, magic_factory
 
-from cellpose.models import CellposeModel, Cellpose
+from cellpose import models
 from cellpose.utils import masks_to_outlines, fill_holes_and_remove_small_masks
 from cellpose.dynamics import get_masks
 from cellpose.transforms import resize_image
 
-from cellpose.__main__ import logger_setup
-import logging
+from cellpose import logger
+#import logging
 
-logger, log_file = logger_setup()
+#logger, log_file = logger_setup()
 
 class TextWindow(QWidget):
     def __init__(self, parent=None):
@@ -69,7 +69,7 @@ def widget_wrapper():
     from napari.qt.threading import thread_worker
     
     @thread_worker
-    def run_cellpose(image, model_type, custom_model, channels, diameter,
+    def run_cellpose(image, model_type, custom_model, channels, channel_axis, diameter,
                     net_avg, resample, cellprob_threshold, 
                     model_match_threshold, do_3D, stitch_threshold):
         flow_threshold = (31.0 - model_match_threshold) / 10.
@@ -77,11 +77,13 @@ def widget_wrapper():
             flow_threshold = 0.0
             logger.info('flow_threshold=0 => no masks thrown out due to model mismatch')
         logger.info(f'computing masks with cellprob_threshold={cellprob_threshold}, flow_threshold={flow_threshold}')
-        pretrained_model = custom_model if model_type=='custom' else model_type
-        CP = CellposeModel(pretrained_model=pretrained_model, gpu=True)
+        if model_type=='custom':
+            CP = models.CellposeModel(pretrained_model=custom_model, gpu=True)
+        else:
+            CP = models.CellposeModel(model_type=model_type, gpu=True)
         masks, flows_orig, _ = CP.eval(image, 
                                     channels=channels, 
-                                    channels_last=True,
+                                    channel_axis=channel_axis,
                                     diameter=diameter,
                                     net_avg=net_avg,
                                     resample=resample,
@@ -90,13 +92,20 @@ def widget_wrapper():
                                     do_3D=do_3D,
                                     stitch_threshold=stitch_threshold)
         del CP 
+        if not do_3D and stitch_threshold==0 and masks.ndim > 2:
+            flows = [[flows_orig[0][i], 
+                      flows_orig[1][:,i],
+                      flows_orig[2][i],
+                      flows_orig[3][:,i]] for i in range(masks.shape[0])]
+            masks = list(masks)
+            flows_orig = flows
         segmentation = (masks, flows_orig)
         return segmentation
 
     @thread_worker
     def compute_diameter(image, channels, model_type):
-        CP = Cellpose(model_type = model_type, gpu=True)
-        diam = CP.sz.eval(image, channels=channels, channels_last=True)[0]
+        CP = models.Cellpose(model_type = model_type, gpu=True)
+        diam = CP.sz.eval(image, channels=channels, channel_axis=-1)[0]
         diam = np.around(diam, 2)
         del CP
         return diam
@@ -220,18 +229,13 @@ def widget_wrapper():
         image = image_layer.data 
         # put channels last
         widget.n_channels = 0
+        widget.channel_axis = None
         if image_layer.ndim == 4 and not image_layer.rgb:
             chan = np.nonzero([a=='c' for a in viewer.dims.axis_labels])[0]
-            if len(chan) > 0 and chan[0] < 3:
+            if len(chan) > 0:
                 chan = chan[0]
                 widget.channel_axis = chan
-                axes = np.arange(0, 4)
-                axes[chan:-1] = axes[chan+1:]
-                axes[-1] = chan
-                image = image.transpose(axes)
-            else:
-                widget.channel_axis = 3
-            widget.n_channels = image.shape[-1]
+                widget.n_channels = image.shape[chan]
         elif image_layer.ndim==3 and not image_layer.rgb:
             image = image[:,:,:,np.newaxis]
 
@@ -240,7 +244,8 @@ def widget_wrapper():
                                 model_type=model_type,
                                 custom_model=str(custom_model.resolve()),
                                 channels=[max(0, main_channel), 
-                                            max(0, optional_nuclear_channel)], 
+                                            max(0, optional_nuclear_channel)],
+                                channel_axis=widget.channel_axis, 
                                 diameter=float(diameter),
                                 net_avg=net_average,
                                 resample=resample_dynamics,
