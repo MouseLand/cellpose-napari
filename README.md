@@ -42,9 +42,9 @@ If you use this plugin please cite the [paper](https://www.nature.com/articles/s
 
 ## Installation
 
-Install an [Anaconda](https://www.anaconda.com/download/) distribution of Python -- Choose **Python 3** and your operating system. Note you might need to use an anaconda prompt if you did not add anaconda to the path. 
+Install an [Anaconda](https://www.anaconda.com/download/) distribution of Python -- Choose **Python 3** and your operating system. Note you might need to use an anaconda prompt if you did not add anaconda to the path.
 
-You can install `cellpose-napari` via [pip]:
+Install `napari` with pip: `pip install napari[all]`. Then install `cellpose-napari` via [pip]:
 
     pip install cellpose-napari
 
