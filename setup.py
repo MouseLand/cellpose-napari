@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 
 
 install_deps = ['napari-plugin-engine>=0.1.4',
-                'cellpose',
+                'cellpose>0.6.2',
                 'imagecodecs']
 
 with open("README.md", "r") as fh:
