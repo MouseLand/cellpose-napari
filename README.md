@@ -47,6 +47,8 @@ Install an [Anaconda](https://www.anaconda.com/download/) distribution of Python
 Install `napari` with pip: `pip install napari[all]`. Then install `cellpose-napari` via [pip]:
 
     pip install cellpose-napari
+    
+ Or install the plugin inside napari in the plugin window.
 
 If install fails in your base environment, create a new environment:
 1. Download the [`environment.yml`](https://github.com/MouseLand/cellpose-napari/blob/master/environment.yml?raw=true) file from the repository. You can do this by cloning the repository, or copy-pasting the text from the file into a text document on your local computer.
