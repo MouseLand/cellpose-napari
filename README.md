@@ -38,7 +38,7 @@ If you use this plugin please cite the [paper](https://www.nature.com/articles/s
       }
 
 
-![cellpose-napari_plugin](docs/_static/napari_main_demo_fast_small.gif?raw=true "cellpose-napari")
+![cellpose-napari_plugin](https://cellpose-napari.readthedocs.io/en/latest/_images/napari_main_demo_fast_small.gif?raw=true "cellpose-napari")
 
 ## Installation
 
