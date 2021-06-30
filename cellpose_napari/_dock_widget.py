@@ -238,6 +238,8 @@ def widget_wrapper():
                 widget.n_channels = image.shape[chan]
         elif image_layer.ndim==3 and not image_layer.rgb:
             image = image[:,:,:,np.newaxis]
+        elif image_layer.rgb:
+            widget.channel_axis = -1
 
         print(image.shape)
         cp_worker = run_cellpose(image=image,
