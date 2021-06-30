@@ -6,7 +6,7 @@ import codecs
 from setuptools import setup, find_packages
 
 
-install_deps = ['napari==0.4.7',
+install_deps = ['napari',
                 'napari-plugin-engine>=0.1.4',
                 'cellpose>0.6.3',
                 'imagecodecs']
