@@ -16,12 +16,6 @@ from napari.layers import Image, Shapes
 from napari_plugin_engine import napari_hook_implementation
 from magicgui import magicgui, magic_factory
 
-from cellpose import models
-from cellpose.utils import masks_to_outlines, fill_holes_and_remove_small_masks
-from cellpose.dynamics import get_masks
-from cellpose.transforms import resize_image
-
-from cellpose import logger
 #import logging
 
 #logger, log_file = logger_setup()
@@ -67,6 +61,14 @@ cp_strings = ['_cp_masks_', '_cp_outlines_', '_cp_flows_', '_cp_cellprob_']
 
 def widget_wrapper():
     from napari.qt.threading import thread_worker
+
+    # Import when users activate plugin
+    from cellpose import models
+    from cellpose.utils import masks_to_outlines, fill_holes_and_remove_small_masks
+    from cellpose.dynamics import get_masks
+    from cellpose.transforms import resize_image
+
+    from cellpose import logger
     
     @thread_worker
     def run_cellpose(image, model_type, custom_model, channels, channel_axis, diameter,
