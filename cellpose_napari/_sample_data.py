@@ -1,7 +1,9 @@
-import pathlib
 import os
-from napari_plugin_engine import napari_hook_implementation
+import pathlib
+from functools import partial
+
 from napari.utils.translations import trans
+from napari_plugin_engine import napari_hook_implementation
 
 CELLPOSE_DATA = [
     ('rgb_3D.tif', trans._('Cells (3D+2Ch)')),
@@ -9,6 +11,10 @@ CELLPOSE_DATA = [
 ]
 
 def _load_cellpose_data(image_name, dname):
+    # Import when users select one of sample data
+    from cellpose.io import imread
+    from cellpose.utils import download_url_to_file
+
     cp_dir = pathlib.Path.home().joinpath('.cellpose')
     cp_dir.mkdir(exist_ok=True)
     data_dir = cp_dir.joinpath('data')
@@ -29,12 +35,6 @@ def _load_cellpose_data(image_name, dname):
 
 @napari_hook_implementation
 def napari_provide_sample_data():
-    from functools import partial
-
-    # Import when users activate plugin
-    from cellpose.utils import download_url_to_file
-    from cellpose.io import imread
-
     return {
         key: {'data': partial(_load_cellpose_data, key, dname), 'display_name': dname}
         for (key, dname) in CELLPOSE_DATA
