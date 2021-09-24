@@ -6,8 +6,7 @@ from napari_plugin_engine import napari_hook_implementation
 import sys, pathlib, os, time
 import numpy as np
 import cv2
-from PyQt5.QtWidgets import QWidget, QTextEdit, QVBoxLayout, QLabel, QTextBrowser
-from PyQt5 import QtCore, QtGui, QtWidgets
+from qtpy.QtWidgets import QWidget, QVBoxLayout, QLabel, QPlainTextEdit
 
 import napari 
 import napari.utils.notifications
@@ -30,13 +29,13 @@ class TextWindow(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.resize(800,400)
-        self.label = QtWidgets.QLabel('keep open to see cellpose run info')
-        self.logTextBox = QtWidgets.QPlainTextEdit(self)
+        self.label = QLabel('keep open to see cellpose run info')
+        self.logTextBox = QPlainTextEdit(self)
         self.logTextBox.setReadOnly(True)
         self.cursor = self.logTextBox.textCursor()
         self.cursor.movePosition(self.cursor.End)    
         
-        layout = QtWidgets.QVBoxLayout()
+        layout = QVBoxLayout()
         # Add the new logging box widget to the layout
         layout.addWidget(self.label)
         layout.addWidget(self.logTextBox)
