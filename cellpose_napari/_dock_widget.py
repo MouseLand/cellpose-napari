@@ -1,21 +1,18 @@
 """
 cellpose dock widget module
 """
+from typing import Any
 from napari_plugin_engine import napari_hook_implementation
 
-import sys, pathlib, os, time
+import time
 import numpy as np
-import cv2
 from qtpy.QtWidgets import QWidget, QVBoxLayout, QLabel, QPlainTextEdit
 
 import napari 
-import napari.utils.notifications
 from napari import Viewer
 from napari.layers import Image, Shapes
-from napari_plugin_engine import napari_hook_implementation
-from magicgui import magicgui, magic_factory
+from magicgui import magicgui
 
-#import logging
 
 #logger, log_file = logger_setup()
 
@@ -113,6 +110,8 @@ def widget_wrapper():
 
     @thread_worker 
     def compute_masks(masks_orig, flows_orig, cellprob_threshold, model_match_threshold):
+        import cv2
+
         #print(flows_orig[3].shape, flows_orig[2].shape, masks_orig.shape)
         flow_threshold = (31.0 - model_match_threshold) / 10.
         if model_match_threshold==0.0:
@@ -180,6 +179,8 @@ def widget_wrapper():
             widget.cellpose_layers = []
 
         def _new_layers(masks, flows_orig):
+            import cv2
+
             flows = resize_image(flows_orig[0], masks.shape[-2], masks.shape[-1],
                                         interpolation=cv2.INTER_NEAREST).astype(np.uint8)
             cellprob = resize_image(flows_orig[2], masks.shape[-2], masks.shape[-1],
@@ -279,7 +280,7 @@ def widget_wrapper():
 
 
     @widget.compute_masks_button.changed.connect 
-    def _compute_masks(event):
+    def _compute_masks(e: Any):
         mask_worker = compute_masks(widget.masks_orig, 
                                     widget.flows_orig, 
                                     widget.cellprob_threshold.value, 
@@ -292,7 +293,7 @@ def widget_wrapper():
         logger.info(f'computed diameter = {diam}')
     
     @widget.compute_diameter_button.changed.connect 
-    def _compute_diameter(event):
+    def _compute_diameter(e: Any):
         print('button clicked')
         if widget.model_type.value == 'custom':
             logger.error('cannot compute diameter for custom model')
@@ -306,7 +307,7 @@ def widget_wrapper():
         ### TODO 3D images
 
     @widget.compute_diameter_shape.changed.connect 
-    def _compute_diameter_shape(event):
+    def _compute_diameter_shape(e: Any):
         diam = 0
         k=0
         for d in widget.shape_layer.value.data:
@@ -318,6 +319,7 @@ def widget_wrapper():
         if k>0:
             _report_diameter(diam)
         else:
+            import logging
             logging.error('no square or circle shapes created')
 
     return widget            
