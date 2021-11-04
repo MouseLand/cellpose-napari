@@ -30,12 +30,12 @@ def test_adding_widget_to_viewer(viewer_widget):
 def test_basic_function(qtbot, viewer_widget):
     viewer, widget = viewer_widget
     viewer.open_sample('cellpose-napari', 'rgb_2D.png')
-    widget.compute_diameter_button.changed(None)
 
     if os.getenv("CI"):
         return
         # actually running cellpose like this takes too long and always timesout on CI
         # need to figure out better strategy
+    widget.compute_diameter_button.changed(None)
     widget()  # run segmentation
 
     def check_widget():
