@@ -8,7 +8,6 @@ import time
 import numpy as np
 from qtpy.QtWidgets import QWidget, QVBoxLayout, QLabel, QPlainTextEdit
 
-import napari 
 from napari import Viewer
 from napari.layers import Image, Shapes
 from magicgui import magicgui
@@ -125,48 +124,49 @@ def widget_wrapper():
                                         interpolation=cv2.INTER_NEAREST)
         return maski 
 
-    @magicgui(call_button='run segmentation',  
-            layout='vertical',
-            model_type = dict(widget_type='ComboBox', label='model type', choices=['cyto', 'nuclei', 'cyto2', 'custom'], value='cyto', tooltip='there is a <em>cyto</em> model, a new <em>cyto2</em> model from user submissions, and a <em>nuclei</em> model'),
-            custom_model = dict(widget_type='FileEdit', label='custom model path: ', tooltip='if model type is custom, specify file path to it here'),
-            main_channel = dict(widget_type='ComboBox', label='channel to segment', choices=main_channel_choices, value=0, tooltip='choose channel with cells'),
-            optional_nuclear_channel = dict(widget_type='ComboBox', label='optional nuclear channel', choices=optional_nuclear_channel_choices, value=0, tooltip='optional, if available, choose channel with nuclei of cells'),
-            diameter = dict(widget_type='LineEdit', label='diameter', value=30, tooltip='approximate diameter of cells to be segmented'),
-            compute_diameter_shape  = dict(widget_type='PushButton', text='compute diameter from shape layer', tooltip='create shape layer with circles and/or squares, select above, and diameter will be estimated from it'),
-            compute_diameter_button  = dict(widget_type='PushButton', text='compute diameter from image', tooltip='cellpose model will estimate diameter from image using specified channels'),
-            cellprob_threshold = dict(widget_type='FloatSlider', name='cellprob_threshold', value=0.0, min=-8.0, max=8.0, step=0.2, tooltip='cell probability threshold (set lower to get more cells and larger cells)'),
-            model_match_threshold = dict(widget_type='FloatSlider', name='model_match_threshold', value=27.0, min=0.0, max=30.0, step=0.2, tooltip='threshold on gradient match to accept a mask (set lower to get more cells)'),
-            compute_masks_button  = dict(widget_type='PushButton', text='recompute last masks with new cellprob + model match', enabled=False),
-            net_average = dict(widget_type='CheckBox', text='average 4 nets', value=True, tooltip='average 4 different fit networks (default) or if not checked run only 1 network (fast)'),
-            resample_dynamics = dict(widget_type='CheckBox', text='resample dynamics', value=False, tooltip='if False, mask estimation with dynamics run on resized image with diameter=30; if True, flows are resized to original image size before dynamics and mask estimation (turn on for more smooth masks)'),
-            process_3D = dict(widget_type='CheckBox', text='process stack as 3D', value=False, tooltip='use default 3D processing where flows in X, Y, and Z are computed and dynamics run in 3D to create masks'),
-            stitch_threshold_3D = dict(widget_type='LineEdit', label='stitch threshold slices', value=0, tooltip='across time or Z, stitch together masks with IoU threshold of "stitch threshold" to create 3D segmentation'),
-            clear_previous_segmentations = dict(widget_type='CheckBox', text='clear previous results', value=True),
-            output_flows = dict(widget_type='CheckBox', text='output flows and cellprob', value=True),
-            output_outlines = dict(widget_type='CheckBox', text='output outlines', value=True),
-            )
-
+    @magicgui(
+        call_button='run segmentation',  
+        layout='vertical',
+        model_type = dict(widget_type='ComboBox', label='model type', choices=['cyto', 'nuclei', 'cyto2', 'custom'], value='cyto', tooltip='there is a <em>cyto</em> model, a new <em>cyto2</em> model from user submissions, and a <em>nuclei</em> model'),
+        custom_model = dict(widget_type='FileEdit', label='custom model path: ', tooltip='if model type is custom, specify file path to it here'),
+        main_channel = dict(widget_type='ComboBox', label='channel to segment', choices=main_channel_choices, value=0, tooltip='choose channel with cells'),
+        optional_nuclear_channel = dict(widget_type='ComboBox', label='optional nuclear channel', choices=optional_nuclear_channel_choices, value=0, tooltip='optional, if available, choose channel with nuclei of cells'),
+        diameter = dict(widget_type='LineEdit', label='diameter', value=30, tooltip='approximate diameter of cells to be segmented'),
+        compute_diameter_shape  = dict(widget_type='PushButton', text='compute diameter from shape layer', tooltip='create shape layer with circles and/or squares, select above, and diameter will be estimated from it'),
+        compute_diameter_button  = dict(widget_type='PushButton', text='compute diameter from image', tooltip='cellpose model will estimate diameter from image using specified channels'),
+        cellprob_threshold = dict(widget_type='FloatSlider', name='cellprob_threshold', value=0.0, min=-8.0, max=8.0, step=0.2, tooltip='cell probability threshold (set lower to get more cells and larger cells)'),
+        model_match_threshold = dict(widget_type='FloatSlider', name='model_match_threshold', value=27.0, min=0.0, max=30.0, step=0.2, tooltip='threshold on gradient match to accept a mask (set lower to get more cells)'),
+        compute_masks_button  = dict(widget_type='PushButton', text='recompute last masks with new cellprob + model match', enabled=False),
+        net_average = dict(widget_type='CheckBox', text='average 4 nets', value=True, tooltip='average 4 different fit networks (default) or if not checked run only 1 network (fast)'),
+        resample_dynamics = dict(widget_type='CheckBox', text='resample dynamics', value=False, tooltip='if False, mask estimation with dynamics run on resized image with diameter=30; if True, flows are resized to original image size before dynamics and mask estimation (turn on for more smooth masks)'),
+        process_3D = dict(widget_type='CheckBox', text='process stack as 3D', value=False, tooltip='use default 3D processing where flows in X, Y, and Z are computed and dynamics run in 3D to create masks'),
+        stitch_threshold_3D = dict(widget_type='LineEdit', label='stitch threshold slices', value=0, tooltip='across time or Z, stitch together masks with IoU threshold of "stitch threshold" to create 3D segmentation'),
+        clear_previous_segmentations = dict(widget_type='CheckBox', text='clear previous results', value=True),
+        output_flows = dict(widget_type='CheckBox', text='output flows and cellprob', value=True),
+        output_outlines = dict(widget_type='CheckBox', text='output outlines', value=True),
+    )
     def widget(#label_logo, 
-            viewer: napari.viewer.Viewer,
-                image_layer: Image,
-                model_type,
-                custom_model,
-                main_channel,
-                optional_nuclear_channel,
-                diameter,
-                shape_layer: Shapes,
-                compute_diameter_shape,
-                compute_diameter_button,
-                cellprob_threshold,
-                model_match_threshold,
-                compute_masks_button,
-                net_average,
-                resample_dynamics,
-                process_3D,
-                stitch_threshold_3D,
-                clear_previous_segmentations,
-                output_flows,
-                output_outlines):
+        viewer: Viewer,
+        image_layer: Image,
+        model_type,
+        custom_model,
+        main_channel,
+        optional_nuclear_channel,
+        diameter,
+        shape_layer: Shapes,
+        compute_diameter_shape,
+        compute_diameter_button,
+        cellprob_threshold,
+        model_match_threshold,
+        compute_masks_button,
+        net_average,
+        resample_dynamics,
+        process_3D,
+        stitch_threshold_3D,
+        clear_previous_segmentations,
+        output_flows,
+        output_outlines
+    ) -> None:
         if not hasattr(widget, 'cellpose_layers'):
             widget.cellpose_layers = []
         
@@ -225,7 +225,7 @@ def widget_wrapper():
                 if not float(stitch_threshold_3D):
                     widget.compute_masks_button.enabled = True            
             except Exception as e:
-                print(e)
+                logger.error(e)
             widget.call_button.enabled = True
             
         image = image_layer.data 
@@ -243,7 +243,6 @@ def widget_wrapper():
         elif image_layer.rgb:
             widget.channel_axis = -1
 
-        print(image.shape)
         cp_worker = run_cellpose(image=image,
                                 model_type=model_type,
                                 custom_model=str(custom_model.resolve()),
@@ -259,9 +258,7 @@ def widget_wrapper():
                                 stitch_threshold=float(stitch_threshold_3D) if image_layer.ndim>2 else 0.0)
         cp_worker.returned.connect(_new_segmentation)
         cp_worker.start()
-        
-        
-        pass
+
 
     def update_masks(masks):
         outlines = masks_to_outlines(masks) * masks
@@ -294,7 +291,6 @@ def widget_wrapper():
     
     @widget.compute_diameter_button.changed.connect 
     def _compute_diameter(e: Any):
-        print('button clicked')
         if widget.model_type.value == 'custom':
             logger.error('cannot compute diameter for custom model')
         else:
