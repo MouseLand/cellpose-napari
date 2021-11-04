@@ -19,7 +19,7 @@ setup(
     author='Carsen Stringer',
     author_email='stringerc@janelia.hhmi.org',
     license='BSD-3',
-    url='https://github.com/carsen-stringer/cellpose-napari',
+    url='https://github.com/Mouseland/cellpose-napari',
     description='a generalist algorithm for anatomical segmentation',
     long_description=long_description,
     long_description_content_type='text/markdown',
