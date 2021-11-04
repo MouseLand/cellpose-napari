@@ -6,31 +6,30 @@ from napari_plugin_engine import napari_hook_implementation
 
 import time
 import numpy as np
-from qtpy.QtWidgets import QWidget, QVBoxLayout, QLabel, QPlainTextEdit
 
 from napari import Viewer
 from napari.layers import Image, Shapes
 from magicgui import magicgui
 
 
-#logger, log_file = logger_setup()
-
-class TextWindow(QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.resize(800,400)
-        self.label = QLabel('keep open to see cellpose run info')
-        self.logTextBox = QPlainTextEdit(self)
-        self.logTextBox.setReadOnly(True)
-        self.cursor = self.logTextBox.textCursor()
-        self.cursor.movePosition(self.cursor.End)    
+# from qtpy.QtWidgets import QWidget, QVBoxLayout, QLabel, QPlainTextEdit
+# class TextWindow(QWidget):
+#     def __init__(self, parent=None):
+#         super().__init__(parent)
+#         self.resize(800,400)
+#         self.label = QLabel('keep open to see cellpose run info')
+#         self.logTextBox = QPlainTextEdit(self)
+#         self.logTextBox.setReadOnly(True)
+#         self.cursor = self.logTextBox.textCursor()
+#         self.cursor.movePosition(self.cursor.End)    
         
-        layout = QVBoxLayout()
-        # Add the new logging box widget to the layout
-        layout.addWidget(self.label)
-        layout.addWidget(self.logTextBox)
-        self.setLayout(layout)
-        self.show()
+#         layout = QVBoxLayout()
+#         # Add the new logging box widget to the layout
+#         layout.addWidget(self.label)
+#         layout.addWidget(self.logTextBox)
+#         self.setLayout(layout)
+#         self.show()
+
 
 #@thread_worker
 def read_logging(log_file, logwindow):
@@ -57,18 +56,12 @@ cp_strings = ['_cp_masks_', '_cp_outlines_', '_cp_flows_', '_cp_cellprob_']
 def widget_wrapper():
     from napari.qt.threading import thread_worker
 
-    # Import when users activate plugin
-    from cellpose import models
-    from cellpose.utils import masks_to_outlines, fill_holes_and_remove_small_masks
-    from cellpose.dynamics import get_masks
-    from cellpose.transforms import resize_image
-
-    from cellpose import logger
-    
     @thread_worker
     def run_cellpose(image, model_type, custom_model, channels, channel_axis, diameter,
                     net_avg, resample, cellprob_threshold, 
                     model_match_threshold, do_3D, stitch_threshold):
+        from cellpose import models, logger
+
         flow_threshold = (31.0 - model_match_threshold) / 10.
         if model_match_threshold==0.0:
             flow_threshold = 0.0
@@ -88,7 +81,7 @@ def widget_wrapper():
                                     flow_threshold=flow_threshold,
                                     do_3D=do_3D,
                                     stitch_threshold=stitch_threshold)
-        del CP 
+        del CP
         if not do_3D and stitch_threshold==0 and masks.ndim > 2:
             flows = [[flows_orig[0][i], 
                       flows_orig[1][:,i],
@@ -96,11 +89,12 @@ def widget_wrapper():
                       flows_orig[3][:,i]] for i in range(masks.shape[0])]
             masks = list(masks)
             flows_orig = flows
-        segmentation = (masks, flows_orig)
-        return segmentation
+        return masks, flows_orig
 
     @thread_worker
     def compute_diameter(image, channels, model_type):
+        from cellpose import models
+
         CP = models.Cellpose(model_type = model_type, gpu=True)
         diam = CP.sz.eval(image, channels=channels, channel_axis=-1)[0]
         diam = np.around(diam, 2)
@@ -110,6 +104,10 @@ def widget_wrapper():
     @thread_worker 
     def compute_masks(masks_orig, flows_orig, cellprob_threshold, model_match_threshold):
         import cv2
+        from cellpose.utils import fill_holes_and_remove_small_masks
+        from cellpose.dynamics import get_masks
+        from cellpose.transforms import resize_image
+        from cellpose import logger
 
         #print(flows_orig[3].shape, flows_orig[2].shape, masks_orig.shape)
         flow_threshold = (31.0 - model_match_threshold) / 10.
@@ -167,6 +165,9 @@ def widget_wrapper():
         output_flows,
         output_outlines
     ) -> None:
+        # Import when users activate plugin
+        from cellpose import logger
+
         if not hasattr(widget, 'cellpose_layers'):
             widget.cellpose_layers = []
         
@@ -179,6 +180,8 @@ def widget_wrapper():
             widget.cellpose_layers = []
 
         def _new_layers(masks, flows_orig):
+            from cellpose.utils import masks_to_outlines
+            from cellpose.transforms import resize_image
             import cv2
 
             flows = resize_image(flows_orig[0], masks.shape[-2], masks.shape[-1],
@@ -261,6 +264,9 @@ def widget_wrapper():
 
 
     def update_masks(masks):
+        from cellpose import logger
+        from cellpose.utils import masks_to_outlines
+
         outlines = masks_to_outlines(masks) * masks
         if masks.ndim==3 and widget.n_channels > 0:
             masks = np.repeat(np.expand_dims(masks, axis=widget.channel_axis), 
@@ -278,6 +284,7 @@ def widget_wrapper():
 
     @widget.compute_masks_button.changed.connect 
     def _compute_masks(e: Any):
+        
         mask_worker = compute_masks(widget.masks_orig, 
                                     widget.flows_orig, 
                                     widget.cellprob_threshold.value, 
@@ -286,11 +293,15 @@ def widget_wrapper():
         mask_worker.start()
 
     def _report_diameter(diam):
+        from cellpose import logger
+
         widget.diameter.value = diam
         logger.info(f'computed diameter = {diam}')
     
     @widget.compute_diameter_button.changed.connect 
     def _compute_diameter(e: Any):
+        from cellpose import logger
+
         if widget.model_type.value == 'custom':
             logger.error('cannot compute diameter for custom model')
         else:
