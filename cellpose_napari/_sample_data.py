@@ -33,10 +33,12 @@ def _load_cellpose_data(image_name, dname):
         download_url_to_file(url, cached_file, progress=True)
     return [(imread(cached_file), {'name': dname})]
 
+_DATA = {
+    key: {'data': partial(_load_cellpose_data, key, dname), 'display_name': dname}
+    for (key, dname) in CELLPOSE_DATA
+}
+globals().update({k: v['data'] for k, v in _DATA.items()})
+
 @napari_hook_implementation
 def napari_provide_sample_data():
-    return {
-        key: {'data': partial(_load_cellpose_data, key, dname), 'display_name': dname}
-        for (key, dname) in CELLPOSE_DATA
-    }
-
+    return _DATA
