@@ -1,0 +1,24 @@
+name: cellpose-napari
+schema_version: 0.1.0
+contributions:
+  commands:
+    - id: cellpose-napari.widget_wrapper
+      title: Create cellpose
+      python_name: cellpose_napari._dock_widget:widget_wrapper
+    # samples
+    - id: cellpose-napari.data.rgb_3D
+      title: Generate RGB 3D sample
+      python_name: cellpose_napari._sample_data:rgb_3D.tif
+    - id: cellpose-napari.data.rgb_2D
+      title: Generate RGB 2D sample
+      python_name: cellpose_napari._sample_data:rgb_2D.png
+  widgets:
+    - command: cellpose-napari.widget_wrapper
+      display_name: cellpose
+  sample_data:
+    - display_name: Cells (3D+2Ch)
+      key: rgb_3D
+      command: cellpose-napari.data.rgb_3D
+    - display_name: Cells 2D
+      key: rgb_2D
+      command: cellpose-napari.data.rgb_2D
