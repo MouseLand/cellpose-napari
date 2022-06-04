@@ -6,6 +6,7 @@ from napari_plugin_engine import napari_hook_implementation
 
 import time
 import numpy as np
+import logging
 
 from napari import Viewer
 from napari.layers import Image, Shapes
@@ -29,6 +30,13 @@ from magicgui import magicgui
 #         layout.addWidget(self.logTextBox)
 #         self.setLayout(layout)
 #         self.show()
+
+logging.root.handlers = []
+logger = logging.getLogger(__name__)
+logging.basicConfig(handlers=[
+        logging.FileHandler("cellpose-napari.log"),
+        logging.StreamHandler()
+    ], encoding='utf-8', level=logging.INFO)
 
 
 #@thread_worker
@@ -60,7 +68,7 @@ def widget_wrapper():
     def run_cellpose(image, model_type, custom_model, channels, channel_axis, diameter,
                     net_avg, resample, cellprob_threshold, 
                     model_match_threshold, do_3D, stitch_threshold):
-        from cellpose import models, logger
+        from cellpose import models
 
         flow_threshold = (31.0 - model_match_threshold) / 10.
         if model_match_threshold==0.0:
@@ -107,7 +115,6 @@ def widget_wrapper():
         from cellpose.utils import fill_holes_and_remove_small_masks
         from cellpose.dynamics import get_masks
         from cellpose.transforms import resize_image
-        from cellpose import logger
 
         #print(flows_orig[3].shape, flows_orig[2].shape, masks_orig.shape)
         flow_threshold = (31.0 - model_match_threshold) / 10.
@@ -166,7 +173,6 @@ def widget_wrapper():
         output_outlines
     ) -> None:
         # Import when users activate plugin
-        from cellpose import logger
 
         if not hasattr(widget, 'cellpose_layers'):
             widget.cellpose_layers = []
@@ -263,8 +269,7 @@ def widget_wrapper():
         cp_worker.start()
 
 
-    def update_masks(masks):
-        from cellpose import logger
+    def update_masks(masks):     
         from cellpose.utils import masks_to_outlines
 
         outlines = masks_to_outlines(masks) * masks
@@ -293,14 +298,11 @@ def widget_wrapper():
         mask_worker.start()
 
     def _report_diameter(diam):
-        from cellpose import logger
-
         widget.diameter.value = diam
         logger.info(f'computed diameter = {diam}')
     
     @widget.compute_diameter_button.changed.connect 
     def _compute_diameter(e: Any):
-        from cellpose import logger
 
         if widget.model_type.value == 'custom':
             logger.error('cannot compute diameter for custom model')
@@ -326,8 +328,7 @@ def widget_wrapper():
         if k>0:
             _report_diameter(diam)
         else:
-            import logging
-            logging.error('no square or circle shapes created')
+            logger.error('no square or circle shapes created')
 
     return widget            
 
