@@ -12,6 +12,7 @@ CELLPOSE_DATA = [
 
 def _load_cellpose_data(image_name, dname):
     # Import when users select one of sample data
+    import numpy as np
     from cellpose.io import imread
     from cellpose.utils import download_url_to_file
 
@@ -31,7 +32,12 @@ def _load_cellpose_data(image_name, dname):
         cached_file = str(data_dir_3D.joinpath(image_name))
     if not os.path.exists(cached_file):
         download_url_to_file(url, cached_file, progress=True)
-    return [(imread(cached_file), {'name': dname})]
+    if '3D' in image_name:
+        data = imread(cached_file)
+        data = np.moveaxis(data, 0, 1)
+        return [(data, {'name': dname})]
+    else:
+        return [(imread(cached_file), {'name': dname})]
 
 _DATA = {
     key: {'data': partial(_load_cellpose_data, key, dname), 'display_name': dname}
