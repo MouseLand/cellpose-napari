@@ -32,12 +32,10 @@ def _load_cellpose_data(image_name, dname):
         cached_file = str(data_dir_3D.joinpath(image_name))
     if not os.path.exists(cached_file):
         download_url_to_file(url, cached_file, progress=True)
+    data = imread(cached_file)
     if '3D' in image_name:
-        data = imread(cached_file)
         data = np.moveaxis(data, 0, 1)
-        return [(data, {'name': dname})]
-    else:
-        return [(imread(cached_file), {'name': dname})]
+    return [(data, {'name': dname})]
 
 _DATA = {
     key: {'data': partial(_load_cellpose_data, key, dname), 'display_name': dname}
