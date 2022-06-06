@@ -11,31 +11,15 @@ import logging
 from napari import Viewer
 from napari.layers import Image, Shapes
 from magicgui import magicgui
+import sys
 
-
-# from qtpy.QtWidgets import QWidget, QVBoxLayout, QLabel, QPlainTextEdit
-# class TextWindow(QWidget):
-#     def __init__(self, parent=None):
-#         super().__init__(parent)
-#         self.resize(800,400)
-#         self.label = QLabel('keep open to see cellpose run info')
-#         self.logTextBox = QPlainTextEdit(self)
-#         self.logTextBox.setReadOnly(True)
-#         self.cursor = self.logTextBox.textCursor()
-#         self.cursor.movePosition(self.cursor.End)    
-        
-#         layout = QVBoxLayout()
-#         # Add the new logging box widget to the layout
-#         layout.addWidget(self.label)
-#         layout.addWidget(self.logTextBox)
-#         self.setLayout(layout)
-#         self.show()
-
-logging.root.handlers = []
+# initialize logger
+# use -v or --verbose when starting napari to increase verbosity
 logger = logging.getLogger(__name__)
-logging.basicConfig(handlers=[
-        logging.FileHandler("cellpose-napari.log"),
-        logging.StreamHandler()], level=logging.INFO)
+if '--verbose' in sys.argv or '-v' in sys.argv:
+    logger.setLevel(logging.DEBUG)
+else:
+    logger.setLevel(logging.WARNING)
 
 
 #@thread_worker
@@ -72,8 +56,8 @@ def widget_wrapper():
         flow_threshold = (31.0 - model_match_threshold) / 10.
         if model_match_threshold==0.0:
             flow_threshold = 0.0
-            logger.info('flow_threshold=0 => no masks thrown out due to model mismatch')
-        logger.info(f'computing masks with cellprob_threshold={cellprob_threshold}, flow_threshold={flow_threshold}')
+            logger.debug('flow_threshold=0 => no masks thrown out due to model mismatch')
+        logger.debug(f'computing masks with cellprob_threshold={cellprob_threshold}, flow_threshold={flow_threshold}')
         if model_type=='custom':
             CP = models.CellposeModel(pretrained_model=custom_model, gpu=True)
         else:
@@ -119,8 +103,8 @@ def widget_wrapper():
         flow_threshold = (31.0 - model_match_threshold) / 10.
         if model_match_threshold==0.0:
             flow_threshold = 0.0
-            logger.info('flow_threshold=0 => no masks thrown out due to model mismatch')
-        logger.info(f'computing masks with cellprob_threshold={cellprob_threshold}, flow_threshold={flow_threshold}')
+            logger.debug('flow_threshold=0 => no masks thrown out due to model mismatch')
+        logger.debug(f'computing masks with cellprob_threshold={cellprob_threshold}, flow_threshold={flow_threshold}')
         maski = get_masks(flows_orig[3].copy(), iscell=(flows_orig[2] > cellprob_threshold),
                         flows=flows_orig[1], threshold=flow_threshold*(masks_orig.ndim<3))
         maski = fill_holes_and_remove_small_masks(maski)
@@ -179,7 +163,6 @@ def widget_wrapper():
         if clear_previous_segmentations:
             layer_names = [layer.name for layer in viewer.layers]
             for layer_name in layer_names:
-                logger.info(layer_name)
                 if any([cp_string in layer_name for cp_string in cp_strings]):
                     viewer.layers.remove(viewer.layers[layer_name])
             widget.cellpose_layers = []
@@ -283,7 +266,7 @@ def widget_wrapper():
         if outline_str in widget.viewer.value.layers:
             widget.viewer.value.layers[outline_str].data = outlines
         widget.masks_orig = masks
-        logger.info('masks updated')
+        logger.debug('masks updated')
 
 
     @widget.compute_masks_button.changed.connect 
@@ -298,7 +281,7 @@ def widget_wrapper():
 
     def _report_diameter(diam):
         widget.diameter.value = diam
-        logger.info(f'computed diameter = {diam}')
+        logger.debug(f'computed diameter = {diam}')
     
     @widget.compute_diameter_button.changed.connect 
     def _compute_diameter(e: Any):
