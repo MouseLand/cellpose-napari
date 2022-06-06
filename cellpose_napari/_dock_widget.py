@@ -45,11 +45,17 @@ cp_strings = ['_cp_masks_', '_cp_outlines_', '_cp_flows_', '_cp_cellprob_']
 #logo = os.path.join(__file__, 'logo/logo_small.png')
 
 def widget_wrapper():
-    import torch
     from napari.qt.threading import thread_worker
+    try:
+        from torch import no_grad
+    except ImportError:
+        def no_grad():
+            def _deco(func):
+                return func
+            return _deco
 
     @thread_worker
-    @torch.no_grad()
+    @no_grad()
     def run_cellpose(image, model_type, custom_model, channels, channel_axis, diameter,
                     net_avg, resample, cellprob_threshold, 
                     model_match_threshold, do_3D, stitch_threshold):
