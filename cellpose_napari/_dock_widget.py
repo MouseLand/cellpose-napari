@@ -35,8 +35,7 @@ logging.root.handlers = []
 logger = logging.getLogger(__name__)
 logging.basicConfig(handlers=[
         logging.FileHandler("cellpose-napari.log"),
-        logging.StreamHandler()
-    ], encoding='utf-8', level=logging.INFO)
+        logging.StreamHandler()], level=logging.INFO)
 
 
 #@thread_worker
