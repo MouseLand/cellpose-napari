@@ -276,7 +276,15 @@ def widget_wrapper():
         widget.masks_orig = masks
         logger.debug('masks updated')
 
-
+    @widget.image_layer.changed.connect
+    def check_dims(image_layer):
+        if image_layer.ndim == 4 and not image_layer.rgb:
+            widget.process_3D.value = True
+        elif image_layer.ndim==3 and not image_layer.rgb:
+            widget.process_3D.value = True
+        else:
+            widget.process_3D.value = False
+            
     @widget.compute_masks_button.changed.connect 
     def _compute_masks(e: Any):
         
