@@ -4,6 +4,7 @@ from cellpose_napari._dock_widget import widget_wrapper
 from pathlib import Path
 from typing import Callable
 import os
+import torch
 
 import pytest
 
@@ -25,7 +26,7 @@ SAMPLE = Path(__file__).parent / "sample.tif"
 #     return viewer, widget
 
 def test_plugin_widget_added(make_napari_viewer: Callable[..., napari.Viewer]):
-    # viewer = make_napari_viewer()
+    viewer = make_napari_viewer()
     widget = widget_wrapper()
     # viewer.window.add_dock_widget(widget)
     # assert len(viewer.window._dock_widgets) == 1
