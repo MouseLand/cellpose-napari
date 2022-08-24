@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from math import isclose
 
 import cellpose_napari
 import napari
@@ -62,7 +63,7 @@ def test_compute_diameter(qtbot, viewer_widget):
     widget.compute_diameter_button.changed(None)
     # check that the diameter value used for segmentation is correct
     def check_diameter():
-        assert widget.diameter.value == "24.1"
+        assert isclose(float(widget.diameter.value), 24.1, abs_tol=10**-1)
 
     qtbot.waitUntil(check_diameter, timeout=30_000)
 
