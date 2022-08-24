@@ -1,6 +1,8 @@
 import cellpose_napari
+import napari
 from cellpose_napari._dock_widget import widget_wrapper
 from pathlib import Path
+from typing import Callable
 import os
 
 import pytest
@@ -13,18 +15,23 @@ WIDGET_NAME = "cellpose"
 SAMPLE = Path(__file__).parent / "sample.tif"
 
 
-@pytest.fixture
-def viewer_widget(make_napari_viewer, napari_plugin_manager):
-    napari_plugin_manager.register(cellpose_napari, name=PLUGIN_NAME)
+# @pytest.fixture
+# def viewer_widget(make_napari_viewer, napari_plugin_manager):
+#     napari_plugin_manager.register(cellpose_napari, name=PLUGIN_NAME)
+#     viewer = make_napari_viewer()
+#     _, widget = viewer.window.add_plugin_dock_widget(
+#         plugin_name=PLUGIN_NAME, widget_name=WIDGET_NAME
+#     )
+#     return viewer, widget
+
+def test_plugin_widget_added(make_napari_viewer: Callable[..., napari.Viewer]):
     viewer = make_napari_viewer()
-    _, widget = viewer.window.add_plugin_dock_widget(
-        plugin_name=PLUGIN_NAME, widget_name=WIDGET_NAME
-    )
-    return viewer, widget
+    widget = widget_wrapper()
+    viewer.window.add_dock_widget(widget)
+    assert len(viewer.window._dock_widgets) == 1
 
-
-def test_adding_widget_to_viewer(viewer_widget):
-    assert viewer_widget[1].native.parent() is not None
+# def test_adding_widget_to_viewer(viewer_widget):
+#     assert viewer_widget[1].native.parent() is not None
 
 
 # def test_basic_function(qtbot, viewer_widget):
