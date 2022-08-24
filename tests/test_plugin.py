@@ -25,7 +25,7 @@ SAMPLE = Path(__file__).parent / "sample.tif"
 #     return viewer, widget
 
 def test_plugin_widget_added(make_napari_viewer: Callable[..., napari.Viewer]):
-    viewer = make_napari_viewer()
+    # viewer = make_napari_viewer()
     widget = widget_wrapper()
     # viewer.window.add_dock_widget(widget)
     # assert len(viewer.window._dock_widgets) == 1
