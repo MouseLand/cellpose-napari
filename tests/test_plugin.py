@@ -30,16 +30,37 @@ def test_adding_widget_to_viewer(viewer_widget):
     assert viewer_widget[1].native.parent() is not None
 
 
-def test_basic_function(qtbot, viewer_widget):
+# def test_basic_function(qtbot, viewer_widget):
+#     viewer, widget = viewer_widget
+#     viewer.open_sample('cellpose-napari', 'rgb_2D')
+#     viewer.layers[0].data = viewer.layers[0].data[0:128, 0:128]
+
+#     #if os.getenv("CI"):
+#     #    return
+#         # actually running cellpose like this takes too long and always timesout on CI
+#         # need to figure out better strategy
+
+#     assert widget.diameter.value == "30"
+    
+#     widget()  # run segmentation with all default parameters
+
+#     def check_widget():
+#         assert widget.cellpose_layers
+
+#     qtbot.waitUntil(check_widget, timeout=30_000)
+#     # check that the layers were created properly
+#     assert len(viewer.layers) == 5
+#     assert "cp_masks" in viewer.layers[-1].name
+
+#     # check that the segmentation was proper, diam ~ 24.1, should yield 10 cells
+#     assert viewer.layers[-1].data.max() == 10
+
+def test_compute_diameter(qtbot, viewer_widget):
     viewer, widget = viewer_widget
     viewer.open_sample('cellpose-napari', 'rgb_2D')
     viewer.layers[0].data = viewer.layers[0].data[0:128, 0:128]
 
-    #if os.getenv("CI"):
-    #    return
-        # actually running cellpose like this takes too long and always timesout on CI
-        # need to figure out better strategy
-
+    # check the initial value of diameter
     assert widget.diameter.value == "30"
     # run the compute diameter from image function
     # check that the diameter value used for segmentation is correct
@@ -47,33 +68,6 @@ def test_basic_function(qtbot, viewer_widget):
         widget.compute_diameter_button.changed(None)
 
     assert isclose(float(widget.diameter.value), 24.1, abs_tol=10**-1)
-    
-    widget()  # run segmentation with all default parameters
-
-    def check_widget():
-        assert widget.cellpose_layers
-
-    qtbot.waitUntil(check_widget, timeout=30_000)
-    # check that the layers were created properly
-    assert len(viewer.layers) == 5
-    assert "cp_masks" in viewer.layers[-1].name
-
-    # check that the segmentation was proper, diam ~ 24.1, should yield 10 cells
-    assert viewer.layers[-1].data.max() == 10
-
-# def test_compute_diameter(qtbot, viewer_widget):
-#     viewer, widget = viewer_widget
-#     viewer.open_sample('cellpose-napari', 'rgb_2D')
-#     viewer.layers[0].data = viewer.layers[0].data[0:128, 0:128]
-
-#     # check the initial value of diameter
-#     assert widget.diameter.value == "30"
-#     # run the compute diameter from image function
-#     # check that the diameter value used for segmentation is correct
-#     with qtbot.waitSignal(widget.diameter.changed, timeout=5000) as blocker:
-#         widget.compute_diameter_button.changed(None)
-
-#     assert isclose(float(widget.diameter.value), 24.1, abs_tol=10**-1)
 
 # @pytest.mark.parametrize("widget_name", MY_WIDGET_NAMES)
 # def test_sample_data_with_viewer(widget_name, make_napari_viewer):
