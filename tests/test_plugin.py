@@ -60,13 +60,11 @@ def test_compute_diameter(qtbot, viewer_widget):
     # check the initial value of diameter
     assert widget.diameter.value == "30"
     # run the compute diameter from image function
-    widget.compute_diameter_button.changed(None)
     # check that the diameter value used for segmentation is correct
-    def check_diameter():
-        assert isclose(float(widget.diameter.value), 24.1, abs_tol=10**-1)
+    with qtbot.waitSignal(widget.diameter.changed, timeout=5000) as blocker:
+        widget.compute_diameter_button.changed(None)
 
-    qtbot.waitUntil(check_diameter, timeout=30_000)
-
+    assert isclose(float(widget.diameter.value), 24.1, abs_tol=10**-1)
 
 # @pytest.mark.parametrize("widget_name", MY_WIDGET_NAMES)
 # def test_sample_data_with_viewer(widget_name, make_napari_viewer):
