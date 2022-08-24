@@ -1,12 +1,11 @@
+import os
+from pathlib import Path
+
 import cellpose_napari
 import napari
-from cellpose_napari._dock_widget import widget_wrapper
-from pathlib import Path
-from typing import Callable
-import os
-import torch
-
 import pytest
+import torch # for ubuntu tests on CI, see https://github.com/pytorch/pytorch/issues/75912
+from cellpose_napari._dock_widget import widget_wrapper
 
 # this is your plugin name declared in your napari.plugins entry point
 PLUGIN_NAME = "cellpose-napari"
@@ -46,8 +45,12 @@ def test_basic_function(qtbot, viewer_widget):
         assert widget.cellpose_layers
 
     qtbot.waitUntil(check_widget, timeout=30_000)
+    # check that the layers were created properly
     assert len(viewer.layers) == 5
     assert "cp_masks" in viewer.layers[-1].name
+
+    # check that the segmentation was proper, should yield 11 cells
+    assert viewer.layers[-1].data.max() == 11
 
 
 # @pytest.mark.parametrize("widget_name", MY_WIDGET_NAMES)
