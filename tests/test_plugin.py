@@ -60,7 +60,7 @@ def test_compute_diameter(qtbot, viewer_widget):
     assert widget.diameter.value == "30"
     # run the compute diameter from image function
     # check that the diameter value used for segmentation is correct
-    with qtbot.waitSignal(widget.diameter.changed, timeout=30_000) as blocker:
+    with qtbot.waitSignal(widget.diameter.changed, timeout=60_000) as blocker:
         widget.compute_diameter_button.changed(None)
 
     assert isclose(float(widget.diameter.value), 24.1, abs_tol=10**-1)
@@ -79,7 +79,7 @@ def test_3D_segmentation(qtbot,  viewer_widget):
     def check_widget():
         assert widget.cellpose_layers
 
-    qtbot.waitUntil(check_widget, timeout=60_000)
+    qtbot.waitUntil(check_widget, timeout=90_000)
     # check that the layers were created properly
     assert len(viewer.layers) == 5
     assert "cp_masks" in viewer.layers[-1].name
