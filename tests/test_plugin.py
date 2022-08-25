@@ -17,15 +17,21 @@ WIDGET_NAME = "cellpose"
 
 SAMPLE = Path(__file__).parent / "sample.tif"
 
-
-def test_basic_function(qtbot, make_napari_viewer: Callable[..., napari.Viewer]):
+@pytest.fixture
+def viewer_widget(make_napari_viewer: Callable[..., napari.Viewer]):
     viewer = make_napari_viewer()
+    _, widget = viewer.window.add_plugin_dock_widget(
+        plugin_name=PLUGIN_NAME, widget_name=WIDGET_NAME
+    )
+    return viewer, widget
+
+def test_basic_function(qtbot, viewer_widget):
+    viewer, widget = viewer_widget
+    assert len(viewer.window._dock_widgets) == 1
+
     viewer.open_sample(PLUGIN_NAME, 'rgb_2D')
     viewer.layers[0].data = viewer.layers[0].data[0:128, 0:128]
 
-    _, widget = viewer.window.add_plugin_dock_widget(PLUGIN_NAME, WIDGET_NAME)
-    assert len(viewer.window._dock_widgets) == 1
-    
     #if os.getenv("CI"):
     #    return
         # actually running cellpose like this takes too long and always timesout on CI
@@ -45,12 +51,10 @@ def test_basic_function(qtbot, make_napari_viewer: Callable[..., napari.Viewer])
     assert viewer.layers[-1].data.max() == 11
 
 @pytest.mark.skipif(sys.platform.startswith('linux'), reason="ubuntu stalls with two cellpose tests")
-def test_compute_diameter(qtbot, make_napari_viewer: Callable[..., napari.Viewer]):
-    viewer = make_napari_viewer()
+def test_compute_diameter(qtbot, viewer_widget):
+    viewer, widget = viewer_widget
     viewer.open_sample(PLUGIN_NAME, 'rgb_2D')
     viewer.layers[0].data = viewer.layers[0].data[0:128, 0:128]
-
-    _, widget = viewer.window.add_plugin_dock_widget(PLUGIN_NAME, WIDGET_NAME)
 
     # check the initial value of diameter
     assert widget.diameter.value == "30"
@@ -62,13 +66,12 @@ def test_compute_diameter(qtbot, make_napari_viewer: Callable[..., napari.Viewer
     assert isclose(float(widget.diameter.value), 24.1, abs_tol=10**-1)
 
 @pytest.mark.skipif(sys.platform.startswith('linux'), reason="ubuntu stalls with >1 cellpose tests")
-def test_3D_segmentation(qtbot, make_napari_viewer: Callable[..., napari.Viewer]):
-    viewer = make_napari_viewer()
+def test_3D_segmentation(qtbot,  viewer_widget):
+    viewer, widget = viewer_widget
     viewer.open_sample(PLUGIN_NAME, 'rgb_3D')
     viewer.layers[0].data = viewer.layers[0].data[0:128, 0:128]
 
-    _, widget = viewer.window.add_plugin_dock_widget(PLUGIN_NAME, WIDGET_NAME)
-
+    # set 3D processing
     widget.process_3D.value = True
 
     widget()  # run segmentation with all default parameters
