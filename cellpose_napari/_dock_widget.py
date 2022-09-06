@@ -200,12 +200,19 @@ def widget_wrapper():
             widget.masks_orig = masks
             widget.iseg = '_' + '%03d'%len(widget.cellpose_layers)
             layers = []
+
+            # get physical scale (...ZYX)
+            if len(image_layer.scale) > 3:
+                physical_scale = image_layer.scale[-3:]
+            else:
+                physical_scale = image_layer.scale
+            
             if widget.output_flows.value:
-                layers.append(viewer.add_image(flows, name=image_layer.name + '_cp_flows' + widget.iseg, visible=False, rgb=True))
-                layers.append(viewer.add_image(cellprob, name=image_layer.name + '_cp_cellprob' + widget.iseg, visible=False))
+                layers.append(viewer.add_image(flows, name=image_layer.name + '_cp_flows' + widget.iseg, visible=False, rgb=True, scale=physical_scale))
+                layers.append(viewer.add_image(cellprob, name=image_layer.name + '_cp_cellprob' + widget.iseg, visible=False, scale=physical_scale))
             if widget.output_outlines.value:
-                layers.append(viewer.add_labels(outlines, name=image_layer.name + '_cp_outlines' + widget.iseg, visible=False))
-            layers.append(viewer.add_labels(masks, name=image_layer.name + '_cp_masks' + widget.iseg, visible=False))
+                layers.append(viewer.add_labels(outlines, name=image_layer.name + '_cp_outlines' + widget.iseg, visible=False, scale=physical_scale))
+            layers.append(viewer.add_labels(masks, name=image_layer.name + '_cp_masks' + widget.iseg, visible=False, scale=physical_scale))
             widget.cellpose_layers.append(layers)
 
         def _new_segmentation(segmentation):
