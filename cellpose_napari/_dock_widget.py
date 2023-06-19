@@ -10,6 +10,8 @@ import logging
 
 from napari import Viewer
 from napari.layers import Image, Shapes
+from napari.utils.notifications import show_info
+
 from magicgui import magicgui
 import sys
 
@@ -54,7 +56,7 @@ def widget_wrapper():
                 return func
             return _deco
 
-    @thread_worker
+    @thread_worker(progress=True)
     @no_grad()
     def run_cellpose(image, model_type, custom_model, channels, channel_axis, diameter,
                     net_avg, resample, cellprob_threshold, 
@@ -66,10 +68,16 @@ def widget_wrapper():
             flow_threshold = 0.0
             logger.debug('flow_threshold=0 => no masks thrown out due to model mismatch')
         logger.debug(f'computing masks with cellprob_threshold={cellprob_threshold}, flow_threshold={flow_threshold}')
+
+        show_info('(Down)Loading models...')
+
         if model_type=='custom':
             CP = models.CellposeModel(pretrained_model=custom_model, gpu=True)
         else:
             CP = models.CellposeModel(model_type=model_type, gpu=True)
+
+        show_info('Running Segmentation...')
+
         masks, flows_orig, _ = CP.eval(image, 
                                     channels=channels, 
                                     channel_axis=channel_axis,
@@ -90,7 +98,7 @@ def widget_wrapper():
             flows_orig = flows
         return masks, flows_orig
 
-    @thread_worker
+    @thread_worker(progress=True)
     def compute_diameter(image, channels, model_type):
         from cellpose import models
 
@@ -100,7 +108,7 @@ def widget_wrapper():
         del CP
         return diam
 
-    @thread_worker 
+    @thread_worker(progress=True) 
     def compute_masks(masks_orig, flows_orig, cellprob_threshold, model_match_threshold):
         import cv2
         from cellpose.utils import fill_holes_and_remove_small_masks
