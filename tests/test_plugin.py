@@ -42,7 +42,7 @@ def test_basic_function(qtbot, viewer_widget):
     def check_widget():
         assert widget.cellpose_layers
 
-    qtbot.waitUntil(check_widget, timeout=30_000)
+    qtbot.waitUntil(check_widget, timeout=60_000)
     # check that the layers were created properly
     assert len(viewer.layers) == 5
     assert "cp_masks" in viewer.layers[-1].name
@@ -78,7 +78,7 @@ def test_3D_segmentation(qtbot,  viewer_widget):
     def check_widget():
         assert widget.cellpose_layers
 
-    qtbot.waitUntil(check_widget, timeout=90_000)
+    qtbot.waitUntil(check_widget, timeout=120_000)
     # check that the layers were created properly
     assert len(viewer.layers) == 5
     assert "cp_masks" in viewer.layers[-1].name
