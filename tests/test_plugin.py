@@ -69,7 +69,6 @@ def test_compute_diameter(qtbot, viewer_widget):
 def test_3D_segmentation(qtbot,  viewer_widget):
     viewer, widget = viewer_widget
     viewer.open_sample(PLUGIN_NAME, 'rgb_3D')
-    viewer.layers[0].data = viewer.layers[0].data[0:128, 0:128]
 
     # set 3D processing
     widget.process_3D.value = True
