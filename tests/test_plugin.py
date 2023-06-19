@@ -71,7 +71,6 @@ def test_3D_segmentation(qtbot,  viewer_widget):
     # by default the widget loads with `process_3D` set to False
     assert widget.process_3D.value == False
     viewer.open_sample(PLUGIN_NAME, 'rgb_3D')
-    viewer.layers[0].data = viewer.layers[0].data[0:128, 0:128]
 
     # check that 3D processing is set correctly after opening a 3D image
     assert widget.process_3D.value == True
