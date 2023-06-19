@@ -54,8 +54,8 @@ If install fails in your base environment, create a new environment:
 1. Download the [`environment.yml`](https://github.com/MouseLand/cellpose-napari/blob/master/environment.yml?raw=true) file from the repository. You can do this by cloning the repository, or copy-pasting the text from the file into a text document on your local computer.
 2. Open an anaconda prompt / command prompt with `conda` for **python 3** in the path
 3. Change directories to where the `environment.yml` is and run `conda env create -f environment.yml`
-4. To activate this new environment, run `conda activate cellpose-napari`
-5. You should see `(cellpose-napari)` on the left side of the terminal line. 
+4. To activate this new environment, run `conda activate cellpose_napari`
+5. You should see `(cellpose_napari)` on the left side of the terminal line. 
 
 If you have **issues** with cellpose installation, see the [cellpose docs](https://cellpose.readthedocs.io/en/latest/installation.html) for more details, and then if the suggestions fail, open an issue.
 
