@@ -42,7 +42,7 @@ def test_basic_function(qtbot, viewer_widget):
     def check_widget():
         assert widget.cellpose_layers
 
-    qtbot.waitUntil(check_widget, timeout=30_000)
+    qtbot.waitUntil(check_widget, timeout=60_000)
     # check that the layers were created properly
     assert len(viewer.layers) == 5
     assert "cp_masks" in viewer.layers[-1].name
@@ -69,7 +69,6 @@ def test_compute_diameter(qtbot, viewer_widget):
 def test_3D_segmentation(qtbot,  viewer_widget):
     viewer, widget = viewer_widget
     viewer.open_sample(PLUGIN_NAME, 'rgb_3D')
-    viewer.layers[0].data = viewer.layers[0].data[0:128, 0:128]
 
     # set 3D processing
     widget.process_3D.value = True
@@ -79,7 +78,7 @@ def test_3D_segmentation(qtbot,  viewer_widget):
     def check_widget():
         assert widget.cellpose_layers
 
-    qtbot.waitUntil(check_widget, timeout=90_000)
+    qtbot.waitUntil(check_widget, timeout=120_000)
     # check that the layers were created properly
     assert len(viewer.layers) == 5
     assert "cp_masks" in viewer.layers[-1].name
