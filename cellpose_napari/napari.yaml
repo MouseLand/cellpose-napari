@@ -2,23 +2,29 @@ name: cellpose-napari
 schema_version: 0.1.0
 contributions:
   commands:
-    - id: cellpose-napari.widget_wrapper
+    # widgets
+    - id: cellpose-napari.widgets.segmentation
       title: Create cellpose
-      python_name: cellpose_napari._dock_widget:widget_wrapper
+      python_name: cellpose_napari.widgets.segmentation_widget:widget_wrapper
+    - id: cellpose-napari.widgets.counting
+      title: Count cells
+      python_name: cellpose_napari.widgets.counting_widget:widget_wrapper
     # samples
-    - id: cellpose-napari.data.rgb_3D
+    - id: cellpose-napari.samples.rgb_3D
       title: Generate RGB 3D sample
-      python_name: cellpose_napari._sample_data:rgb_3D.tif
-    - id: cellpose-napari.data.rgb_2D
+      python_name: cellpose_napari.samples.cell_data:rgb_3D.tif
+    - id: cellpose-napari.samples.rgb_2D
       title: Generate RGB 2D sample
-      python_name: cellpose_napari._sample_data:rgb_2D.png
+      python_name: cellpose_napari.samples.cell_data:rgb_2D.png
   widgets:
-    - command: cellpose-napari.widget_wrapper
+    - command: cellpose-napari.widgets.segmentation
       display_name: cellpose
+    - command: cellpose-napari.widgets.counting
+      display_name: cell counting
   sample_data:
     - display_name: Cells (3D+2Ch)
       key: rgb_3D
-      command: cellpose-napari.data.rgb_3D
+      command: cellpose-napari.samples.rgb_3D
     - display_name: Cells 2D
       key: rgb_2D
-      command: cellpose-napari.data.rgb_2D
+      command: cellpose-napari.samples.rgb_2D

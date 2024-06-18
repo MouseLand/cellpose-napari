@@ -13,6 +13,8 @@ from napari.layers import Image, Shapes
 from magicgui import magicgui
 import sys
 
+from cellpose_napari.utils import CP_STRINGS, MAIN_CHANNEL_CHOICES, OPTIONAL_NUCLEAR_CHANNEL_CHOICES
+
 # initialize logger
 # use -v or --verbose when starting napari to increase verbosity
 logger = logging.getLogger(__name__)
@@ -35,14 +37,6 @@ def read_logging(log_file, logwindow):
                 logwindow.cursor.movePosition(logwindow.cursor.End)
                 logwindow.cursor.insertText(line)
                 yield line
-            
-main_channel_choices = [('average all channels', 0), ('0=red', 1), ('1=green', 2), ('2=blue', 3),
-                        ('3', 4), ('4', 5), ('5', 6), ('6', 7), ('7', 8), ('8', 9)]
-optional_nuclear_channel_choices = [('none', 0), ('0=red', 1), ('1=green', 2), ('2=blue', 3),
-                                    ('3', 4), ('4', 5), ('5', 6), ('6', 7), ('7', 8), ('8', 9)]
-cp_strings = ['_cp_masks_', '_cp_outlines_', '_cp_flows_', '_cp_cellprob_']
-
-#logo = os.path.join(__file__, 'logo/logo_small.png')
 
 def widget_wrapper():
     from napari.qt.threading import thread_worker
@@ -125,8 +119,8 @@ def widget_wrapper():
         layout='vertical',
         model_type = dict(widget_type='ComboBox', label='model type', choices=['cyto', 'nuclei', 'cyto2', 'custom'], value='cyto', tooltip='there is a <em>cyto</em> model, a new <em>cyto2</em> model from user submissions, and a <em>nuclei</em> model'),
         custom_model = dict(widget_type='FileEdit', label='custom model path: ', tooltip='if model type is custom, specify file path to it here'),
-        main_channel = dict(widget_type='ComboBox', label='channel to segment', choices=main_channel_choices, value=0, tooltip='choose channel with cells'),
-        optional_nuclear_channel = dict(widget_type='ComboBox', label='optional nuclear channel', choices=optional_nuclear_channel_choices, value=0, tooltip='optional, if available, choose channel with nuclei of cells'),
+        main_channel = dict(widget_type='ComboBox', label='channel to segment', choices=MAIN_CHANNEL_CHOICES, value=0, tooltip='choose channel with cells'),
+        optional_nuclear_channel = dict(widget_type='ComboBox', label='optional nuclear channel', choices=OPTIONAL_NUCLEAR_CHANNEL_CHOICES, value=0, tooltip='optional, if available, choose channel with nuclei of cells'),
         diameter = dict(widget_type='LineEdit', label='diameter', value=30, tooltip='approximate diameter of cells to be segmented'),
         compute_diameter_shape  = dict(widget_type='PushButton', text='compute diameter from shape layer', tooltip='create shape layer with circles and/or squares, select above, and diameter will be estimated from it'),
         compute_diameter_button  = dict(widget_type='PushButton', text='compute diameter from image', tooltip='cellpose model will estimate diameter from image using specified channels'),
@@ -171,7 +165,7 @@ def widget_wrapper():
         if clear_previous_segmentations:
             layer_names = [layer.name for layer in viewer.layers]
             for layer_name in layer_names:
-                if any([cp_string in layer_name for cp_string in cp_strings]):
+                if any([cp_string in layer_name for cp_string in CP_STRINGS]):
                     viewer.layers.remove(viewer.layers[layer_name])
             widget.cellpose_layers = []
 
@@ -332,6 +326,5 @@ def widget_wrapper():
 
 @napari_hook_implementation
 def napari_experimental_provide_dock_widget():
-    return widget_wrapper, {'name': 'cellpose'}
-
+    return widget_wrapper, {'name': 'cellpose segmentation'}
 
