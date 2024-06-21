@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QWidget, QFileDialog, QTableWidget, QVBoxLayout, QPu
 
 
 CP_STRINGS = [
-  '_cp_masks_', '_cp_outlines_', '_cp_flows_', '_cp_cellprob_'
+  '_cp_masks', '_cp_outlines', '_cp_flows', '_cp_cellprob'
 ]
 MAIN_CHANNEL_CHOICES = [
   ('average all channels', 0), ('0=red', 1), ('1=green', 2), ('2=blue', 3),
