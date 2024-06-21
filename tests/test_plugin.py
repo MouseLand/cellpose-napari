@@ -4,14 +4,14 @@ from pathlib import Path
 from math import isclose
 from typing import Callable
 
-import cellpose_napari
+import microscope_napari
 import napari
 import pytest
 import torch # for ubuntu tests on CI, see https://github.com/pytorch/pytorch/issues/75912
-from cellpose_napari.widgets.segmentation_widget import widget_wrapper
+from microscope_napari.widgets.segmentation_widget import widget_wrapper
 
 # this is your plugin name declared in your napari.plugins entry point
-PLUGIN_NAME = "cellpose-napari"
+PLUGIN_NAME = "microscope-napari"
 # the name of your widget(s)
 WIDGET_NAME = "cellpose"
 

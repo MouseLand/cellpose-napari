@@ -1,0 +1,30 @@
+name: microscope-napari
+schema_version: 0.1.0
+contributions:
+  commands:
+    # widgets
+    - id: microscope-napari.widgets.segmentation
+      title: Create cellpose
+      python_name: microscope_napari.widgets.segmentation_widget:widget_wrapper
+    - id: microscope-napari.widgets.counting
+      title: Count cells
+      python_name: microscope_napari.widgets.counting_widget:widget_wrapper
+    # samples
+    - id: microscope-napari.samples.rgb_3D
+      title: Generate RGB 3D sample
+      python_name: microscope_napari.samples.cell_data:rgb_3D.tif
+    - id: microscope-napari.samples.rgb_2D
+      title: Generate RGB 2D sample
+      python_name: microscope_napari.samples.cell_data:rgb_2D.png
+  widgets:
+    - command: microscope-napari.widgets.segmentation
+      display_name: cellpose
+    - command: microscope-napari.widgets.counting
+      display_name: cell counting
+  sample_data:
+    - display_name: Cells (3D+2Ch)
+      key: rgb_3D
+      command: microscope-napari.samples.rgb_3D
+    - display_name: Cells 2D
+      key: rgb_2D
+      command: microscope-napari.samples.rgb_2D

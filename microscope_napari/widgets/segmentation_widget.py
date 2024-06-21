@@ -13,7 +13,7 @@ from napari.layers import Image, Shapes
 from magicgui import magicgui
 import sys
 
-from cellpose_napari.utils import CP_STRINGS, MAIN_CHANNEL_CHOICES, OPTIONAL_NUCLEAR_CHANNEL_CHOICES
+from microscope_napari.utils import CP_STRINGS, MAIN_CHANNEL_CHOICES, OPTIONAL_NUCLEAR_CHANNEL_CHOICES
 
 # initialize logger
 # use -v or --verbose when starting napari to increase verbosity

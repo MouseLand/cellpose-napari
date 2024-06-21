@@ -3,4 +3,4 @@ requires = ["setuptools", "wheel", "setuptools_scm"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
-write_to = "cellpose_napari/_version.py"
+write_to = "microscope_napari/_version.py"

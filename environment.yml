@@ -1,4 +1,4 @@
-name: cellpose_napari
+name: microscope_napari
 dependencies:
   - python>3.4,<3.9
   - pip
@@ -15,4 +15,4 @@ dependencies:
     - imagecodecs
     - tifffile
     - napari
-    - cellpose-napari
+    - pydantic==1.10.10

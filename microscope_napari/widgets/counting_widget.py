@@ -7,7 +7,7 @@ from napari import Viewer
 from napari.layers import Image
 from napari_plugin_engine import napari_hook_implementation
 
-from cellpose_napari.utils import create_table_with_csv_export, MAIN_CHANNEL_CHOICES, OPTIONAL_NUCLEAR_CHANNEL_CHOICES, CP_STRINGS
+from microscope_napari.utils import create_table_with_csv_export, MAIN_CHANNEL_CHOICES, OPTIONAL_NUCLEAR_CHANNEL_CHOICES, CP_STRINGS
 
 
 def widget_wrapper():
