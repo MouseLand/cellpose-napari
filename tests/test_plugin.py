@@ -8,7 +8,7 @@ import cellpose_napari
 import napari
 import pytest
 import torch # for ubuntu tests on CI, see https://github.com/pytorch/pytorch/issues/75912
-from cellpose_napari._dock_widget import widget_wrapper
+from cellpose_napari.widgets.segmentation_widget import widget_wrapper
 
 # this is your plugin name declared in your napari.plugins entry point
 PLUGIN_NAME = "cellpose-napari"

@@ -51,7 +51,7 @@ def widget_wrapper():
     @thread_worker
     @no_grad()
     def run_cellpose(image, model_type, custom_model, channels, channel_axis, diameter,
-                    net_avg, resample, cellprob_threshold, 
+                    resample, cellprob_threshold, 
                     model_match_threshold, do_3D, stitch_threshold):
         from cellpose import models
 
@@ -68,7 +68,6 @@ def widget_wrapper():
                                     channels=channels, 
                                     channel_axis=channel_axis,
                                     diameter=diameter,
-                                    net_avg=net_avg,
                                     resample=resample,
                                     cellprob_threshold=cellprob_threshold,
                                     flow_threshold=flow_threshold,
@@ -127,7 +126,6 @@ def widget_wrapper():
         cellprob_threshold = dict(widget_type='FloatSlider', name='cellprob_threshold', value=0.0, min=-8.0, max=8.0, step=0.2, tooltip='cell probability threshold (set lower to get more cells and larger cells)'),
         model_match_threshold = dict(widget_type='FloatSlider', name='model_match_threshold', value=27.0, min=0.0, max=30.0, step=0.2, tooltip='threshold on gradient match to accept a mask (set lower to get more cells)'),
         compute_masks_button  = dict(widget_type='PushButton', text='recompute last masks with new cellprob + model match', enabled=False),
-        net_average = dict(widget_type='CheckBox', text='average 4 nets', value=True, tooltip='average 4 different fit networks (default) or if not checked run only 1 network (fast)'),
         resample_dynamics = dict(widget_type='CheckBox', text='resample dynamics', value=False, tooltip='if False, mask estimation with dynamics run on resized image with diameter=30; if True, flows are resized to original image size before dynamics and mask estimation (turn on for more smooth masks)'),
         process_3D = dict(widget_type='CheckBox', text='process stack as 3D', value=False, tooltip='use default 3D processing where flows in X, Y, and Z are computed and dynamics run in 3D to create masks'),
         stitch_threshold_3D = dict(widget_type='LineEdit', label='stitch threshold slices', value=0, tooltip='across time or Z, stitch together masks with IoU threshold of "stitch threshold" to create 3D segmentation'),
@@ -149,7 +147,6 @@ def widget_wrapper():
         cellprob_threshold,
         model_match_threshold,
         compute_masks_button,
-        net_average,
         resample_dynamics,
         process_3D,
         stitch_threshold_3D,
@@ -250,7 +247,6 @@ def widget_wrapper():
                                             max(0, optional_nuclear_channel)],
                                 channel_axis=widget.channel_axis, 
                                 diameter=float(diameter),
-                                net_avg=net_average,
                                 resample=resample_dynamics,
                                 cellprob_threshold=cellprob_threshold,
                                 model_match_threshold=model_match_threshold,
