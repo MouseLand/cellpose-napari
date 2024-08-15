@@ -112,7 +112,7 @@ class LabelPainter:
 # Example usage within a plugin
 def activate_label_painter(viewer, image_layer, point_size=4):
     # Determine the size of the labels layer based on the image layer
-    labels_layer = viewer.add_labels(np.zeros(image_layer.data.shape[:2], dtype=int), name="Labels")
+    labels_layer = viewer.add_labels(np.zeros(image_layer.data.shape[:2], dtype=int), name="Annotations")
     points_layer = viewer.add_points(np.empty((0, 2)), name="Path Points", size=point_size)
     painter = LabelPainter(viewer, labels_layer, points_layer, point_size)
     return painter, labels_layer
