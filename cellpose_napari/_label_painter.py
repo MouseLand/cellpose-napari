@@ -14,9 +14,12 @@ class LabelPainter:
         self.drawing = False
         self.moved_outside_start_radius = False
 
-        # Register the callbacks
-        self.mouse_drag_callback = self.viewer.mouse_drag_callbacks.append(self.handle_mouse_drag)
-        self.mouse_move_callback = self.viewer.mouse_move_callbacks.append(self.track_mouse)
+        # Register the callbacks and store their indices
+        self.viewer.mouse_drag_callbacks.append(self.handle_mouse_drag)
+        self.mouse_drag_callback_index = len(self.viewer.mouse_drag_callbacks) - 1
+        
+        self.viewer.mouse_move_callbacks.append(self.track_mouse)
+        self.mouse_move_callback_index = len(self.viewer.mouse_move_callbacks) - 1
 
     def clamp_point_to_bounds(self, point, shape):
         """Clamp the point coordinates to be within the bounds of the layer."""
@@ -106,8 +109,10 @@ class LabelPainter:
 
     def disconnect(self):
         """Remove the registered callbacks."""
-        self.viewer.mouse_drag_callbacks.remove(self.mouse_drag_callback)
-        self.viewer.mouse_move_callbacks.remove(self.mouse_move_callback)
+        if self.mouse_drag_callback_index >= 0:
+            self.viewer.mouse_drag_callbacks.pop(self.mouse_drag_callback_index)
+        if self.mouse_move_callback_index >= 0:
+            self.viewer.mouse_move_callbacks.pop(self.mouse_move_callback_index)
 
 # Example usage within a plugin
 def activate_label_painter(viewer, image_layer, point_size=4):
@@ -130,9 +135,9 @@ def main():
     image_layer = viewer.add_image(blobs_image, name="Blobs Image")
 
     # Activate the label painter on this image layer
-    painter, labels_layer = activate_label_painter(viewer, image_layer)
-
-    napari.run()
+    return activate_label_painter(viewer, image_layer)
 
 if __name__ == '__main__':
-    main()
+    painter, labels_layer = main()
+
+    # napari.run()
