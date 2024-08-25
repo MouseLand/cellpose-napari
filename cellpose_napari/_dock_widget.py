@@ -13,6 +13,10 @@ from napari.layers import Image, Shapes
 from magicgui import magicgui
 import sys
 
+CP_models = ["cyto3", "cyto2", "cyto", "nuclei", "tissuenet_cp3", 
+             "livecell_cp3", "yeast_PhC_cp3", "yeast_BF_cp3", "bact_phase_cp3", 
+             "bact_fluor_cp3", "deepbacs_cp3", "cyto2_cp3"]
+
 # initialize logger
 # use -v or --verbose when starting napari to increase verbosity
 logger = logging.getLogger(__name__)
@@ -91,8 +95,9 @@ def widget_wrapper():
     @thread_worker
     def compute_diameter(image, channels, model_type):
         from cellpose import models
+        model_type0 = model_type if model_type in CP_models[:4] else "cyto3"
 
-        CP = models.Cellpose(model_type = model_type, gpu=True)
+        CP = models.Cellpose(model_type = model_type0, gpu=True)
         diam = CP.sz.eval(image, channels=channels, channel_axis=-1)[0]
         diam = np.around(diam, 2)
         del CP
@@ -121,7 +126,7 @@ def widget_wrapper():
     @magicgui(
         call_button='run segmentation',  
         layout='vertical',
-        model_type = dict(widget_type='ComboBox', label='model type', choices=['cyto', 'nuclei', 'cyto2', 'custom'], value='cyto', tooltip='there is a <em>cyto</em> model, a new <em>cyto2</em> model from user submissions, and a <em>nuclei</em> model'),
+        model_type = dict(widget_type='ComboBox', label='model type', choices=[*CP_models, 'custom'], value='cyto3', tooltip='there is a <em>cyto</em> model, a new <em>cyto2</em> model from user submissions, and a <em>nuclei</em> model'),
         custom_model = dict(widget_type='FileEdit', label='custom model path: ', tooltip='if model type is custom, specify file path to it here'),
         main_channel = dict(widget_type='ComboBox', label='channel to segment', choices=main_channel_choices, value=0, tooltip='choose channel with cells'),
         optional_nuclear_channel = dict(widget_type='ComboBox', label='optional nuclear channel', choices=optional_nuclear_channel_choices, value=0, tooltip='optional, if available, choose channel with nuclei of cells'),
