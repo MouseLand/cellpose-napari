@@ -1,6 +1,9 @@
 # This workflows will upload a Python Package using Twine when a release is created
 # For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
 
+### test workflow from Talley Lambert's napari-omero! thanks!
+# https://github.com/tlambert03/napari-omero/blob/main/.github/workflows/ci.yml
+
 name: tests
 
 on:
@@ -15,14 +18,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  check-manifest:
-    # check-manifest is a tool that checks that all files in version control are
-    # included in the sdist (unless explicitly excluded)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: pipx run check-manifest
-
   test:
     name: ${{ matrix.platform }} ${{ matrix.python-version }}
     runs-on: ${{ matrix.platform }}
@@ -35,10 +30,6 @@ jobs:
         platform: [ubuntu-latest, macos-latest, windows-latest]
         python-version: ["3.8", "3.9", "3.10"]
         backend: [pyqt5]
-        include:
-          - platform: ubuntu-latest
-            python-version: 3.7
-            backend: pyqt5
 
     steps:
       - uses: actions/checkout@v4
