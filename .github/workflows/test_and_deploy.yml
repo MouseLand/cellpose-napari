@@ -22,7 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         platform: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ['3.8', '3.9', '3.10']
+        python-version: ['3.9', '3.10', '3.11']
         exclude: # torch doesn't support windows python 3.10 https://pytorch.org/get-started/locally/#windows-python
           - platform: windows-latest
             python-version: '3.10'
@@ -54,12 +54,10 @@ jobs:
           python -m pip install setuptools tox tox-gh-actions
       # this runs the platform-specific tests declared in tox.ini
       - name: Test with tox
-        uses: GabrielBB/xvfb-action@v1
-        with:
-          run: python -m tox
+        run: tox
         env:
           PLATFORM: ${{ matrix.platform }}
-
+        
       - name: Coverage
         uses: codecov/codecov-action@v2
 
