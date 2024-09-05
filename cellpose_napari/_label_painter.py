@@ -54,6 +54,13 @@ class LabelPainter:
             self.points_layer.add(self.start_point)
             self.drawing = True
             self.moved_outside_start_radius = False
+
+            # Add an extra point to start the path
+            current_point = self.labels_layer.world_to_data(event.position)[:2]
+            current_point = self.clamp_point_to_bounds(current_point, self.labels_layer.data.shape)
+            
+            self.path.append(current_point)
+            self.points_layer.add(current_point)
             yield
 
             while self.drawing:
@@ -68,6 +75,7 @@ class LabelPainter:
         if self.drawing:
             current_point = self.labels_layer.world_to_data(event.position)[:2]
             current_point = self.clamp_point_to_bounds(current_point, self.labels_layer.data.shape)
+
             self.path.append(current_point)
             self.points_layer.current_face_color = 'white'
             self.points_layer.current_size = self.point_size
@@ -140,4 +148,4 @@ def main():
 if __name__ == '__main__':
     painter, labels_layer = main()
 
-    # napari.run()
+    napari.run()
