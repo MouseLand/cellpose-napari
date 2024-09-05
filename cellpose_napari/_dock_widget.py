@@ -220,17 +220,12 @@ def widget_wrapper():
             (widget.label_painter, labels_layer) = activate_label_painter(viewer, image_layer)
             widget.cellpose_layers.append(labels_layer)
 
-            # Create the callback function to disconnect the label_painter
-            def disconnect_label_painter():
+            def custom_hide_event(event):
                 widget.label_painter.disconnect()
+                event.accept()
 
-            # Not ideal, but should do the trick
-            for dock_widget in viewer.window._dock_widgets.values():
-                print(f"Checking dock widget: {dock_widget.widget()}", file=sys.stdout, flush=True)
-                if dock_widget.widget() is widget:
-                    dock_widget.destroyed.connect(disconnect_label_painter)
-                    print(f"connected to {widget}")
-                    break
+            # Attach the custom hide event handler to the native widget
+            widget.native.hideEvent = custom_hide_event
 
         def _new_segmentation(segmentation):
             masks, flows_orig = segmentation
