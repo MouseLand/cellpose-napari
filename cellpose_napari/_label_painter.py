@@ -3,11 +3,12 @@ import cv2
 import napari
 
 class LabelPainter:
-    def __init__(self, viewer, labels_layer, points_layer, point_size=10):
+    def __init__(self, viewer, labels_layer, points_layer, point_size=10, end_zone_factor=3):
         self.viewer = viewer
         self.labels_layer = labels_layer
         self.points_layer = points_layer
         self.point_size = point_size
+        self.end_zone_factor = end_zone_factor
 
         self.start_point = None
         self.path = []
@@ -50,7 +51,7 @@ class LabelPainter:
             self.start_point = self.clamp_point_to_bounds(self.start_point, self.labels_layer.data.shape)
             self.path = [self.start_point]
             self.points_layer.current_face_color = 'red'
-            self.points_layer.current_size = self.point_size * 3
+            self.points_layer.current_size = self.point_size * self.end_zone_factor
             self.points_layer.add(self.start_point)
             self.drawing = True
             self.moved_outside_start_radius = False
@@ -82,7 +83,7 @@ class LabelPainter:
             self.points_layer.add(current_point)
 
             # Check if the mouse has moved outside the start point's tolerance
-            if not self.moved_outside_start_radius and not np.allclose(self.start_point, current_point, atol=self.point_size):
+            if not self.moved_outside_start_radius and not np.allclose(self.start_point, current_point, atol=(self.point_size * self.end_zone_factor)):
                 self.moved_outside_start_radius = True
 
             # Allow closing the path only if the mouse has moved outside the start radius
