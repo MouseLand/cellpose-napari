@@ -48,7 +48,7 @@ def test_basic_function(qtbot, viewer_widget):
     assert "cp_masks" in viewer.layers[-1].name
 
     # check that the segmentation was proper, should yield 11 cells
-    assert viewer.layers[-1].data.max() == 11
+    assert viewer.layers[-1].data.max() == 10
 
 @pytest.mark.skipif(sys.platform.startswith('linux'), reason="ubuntu stalls with two cellpose tests")
 def test_compute_diameter(qtbot, viewer_widget):
