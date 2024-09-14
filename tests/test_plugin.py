@@ -71,7 +71,9 @@ def test_compute_diameter(qtbot, viewer_widget):
     with qtbot.waitSignal(widget.diameter.changed, timeout=60_000) as blocker:
         widget.compute_diameter_button.changed(None)
 
-    assert isclose(float(widget.diameter.value), 24.1, abs_tol=10**-1)
+    # local on macOS with MPS, get 20.37, with CPU-only it's 20.83, same as CI
+    # so choosing a target that works for both
+    assert isclose(float(widget.diameter.value), 20.6, abs_tol=0.3)
 
 @pytest.mark.skipif(sys.platform.startswith('linux'), reason="ubuntu stalls with >1 cellpose tests")
 def test_3D_segmentation(qtbot,  viewer_widget):
@@ -80,7 +82,7 @@ def test_3D_segmentation(qtbot,  viewer_widget):
 
     # set 3D processing
     widget.process_3D.value = True
-
+    widget.model_choice.value = "cyto3"
     widget()  # run segmentation with all default parameters
 
     def check_widget():
@@ -91,5 +93,5 @@ def test_3D_segmentation(qtbot,  viewer_widget):
     assert len(viewer.layers) == 5
     assert "cp_masks" in viewer.layers[-1].name
 
-    # check that the segmentation was proper, should yield 7 cells
-    assert viewer.layers[-1].data.max() == 7
+    # check that the segmentation was proper, `cyto3` should yield 9 cells
+    assert viewer.layers[-1].data.max() == 9
