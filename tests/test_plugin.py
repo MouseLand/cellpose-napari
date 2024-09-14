@@ -58,7 +58,6 @@ def test_basic_function(qtbot, viewer_widget):
     # check that the segmentation was proper, should yield 11 cells
     assert viewer.layers[-1].data.max() == 10
 
-@pytest.mark.skipif(sys.platform.startswith('linux'), reason="ubuntu stalls with two cellpose tests")
 def test_compute_diameter(qtbot, viewer_widget):
     viewer, widget = viewer_widget
     viewer.open_sample(PLUGIN_NAME, 'rgb_2D')
@@ -75,7 +74,6 @@ def test_compute_diameter(qtbot, viewer_widget):
     # so choosing a target that works for both
     assert isclose(float(widget.diameter.value), 20.6, abs_tol=0.3)
 
-@pytest.mark.skipif(sys.platform.startswith('linux'), reason="ubuntu stalls with >1 cellpose tests")
 def test_3D_segmentation(qtbot,  viewer_widget):
     viewer, widget = viewer_widget
     viewer.open_sample(PLUGIN_NAME, 'rgb_3D')
