@@ -37,12 +37,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: conda-incubator/setup-miniconda@v2
-        with:
-          miniconda-version: "latest"
-          channels: conda-forge
-          channel-priority: strict
-          python-version: ${{ matrix.python-version }}
 
       - uses: tlambert03/setup-qt-libs@v1
 
