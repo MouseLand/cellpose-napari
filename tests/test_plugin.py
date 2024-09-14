@@ -17,6 +17,13 @@ WIDGET_NAME = "cellpose"
 
 SAMPLE = Path(__file__).parent / "sample.tif"
 
+@pytest.fixture(autouse=True)
+def patch_mps_on_CI(monkeypatch):
+    # https://github.com/actions/runner-images/issues/9918
+    if os.getenv('CI'):
+        monkeypatch.setattr("torch.backends.mps.is_available", lambda: False)
+
+
 @pytest.fixture
 def viewer_widget(make_napari_viewer: Callable[..., napari.Viewer]):
     viewer = make_napari_viewer()
