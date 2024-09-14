@@ -25,9 +25,6 @@ jobs:
   test:
     name: ${{ matrix.platform }} ${{ matrix.python-version }}
     runs-on: ${{ matrix.platform }}
-    defaults:
-      run:
-        shell: bash -l {0}
     strategy:
       fail-fast: false
       matrix:
@@ -58,7 +55,6 @@ jobs:
       - name: Test with tox
         uses: aganders3/headless-gui@v2
         with:
-          shell: bash -el {0}
           run: python -m tox
         env:
           PLATFORM: ${{ matrix.platform }}
