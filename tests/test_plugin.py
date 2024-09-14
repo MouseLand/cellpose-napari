@@ -22,7 +22,7 @@ def patch_mps_on_CI(monkeypatch):
     # https://github.com/actions/runner-images/issues/9918
     if os.getenv('CI'):
         monkeypatch.setattr("torch.backends.mps.is_available", lambda: False)
-        monkeypatch.setattr("cellpose.core.assign_device", lambda: (torch.device("cpu"), False))
+        monkeypatch.setattr("cellpose.core.assign_device", lambda **kwargs: (torch.device("cpu"), False))
 
 
 @pytest.fixture
