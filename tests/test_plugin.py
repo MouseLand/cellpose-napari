@@ -82,7 +82,7 @@ def test_3D_segmentation(qtbot,  viewer_widget):
 
     # set 3D processing
     widget.process_3D.value = True
-    widget.model_choice.value = "cyto3"
+    widget.model_type.value = "cyto3"
     widget()  # run segmentation with all default parameters
 
     def check_widget():
