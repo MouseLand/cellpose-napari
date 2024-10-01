@@ -1,14 +1,11 @@
 import os
-import sys
 from pathlib import Path
 from math import isclose
 from typing import Callable
 
-import cellpose_napari
 import napari
 import pytest
 import torch # for ubuntu tests on CI, see https://github.com/pytorch/pytorch/issues/75912
-from cellpose_napari._dock_widget import widget_wrapper
 
 # this is your plugin name declared in your napari.plugins entry point
 PLUGIN_NAME = "cellpose-napari"
@@ -16,6 +13,14 @@ PLUGIN_NAME = "cellpose-napari"
 WIDGET_NAME = "cellpose"
 
 SAMPLE = Path(__file__).parent / "sample.tif"
+
+@pytest.fixture(autouse=True)
+def patch_mps_on_CI(monkeypatch):
+    # https://github.com/actions/runner-images/issues/9918
+    if os.getenv('CI'):
+        monkeypatch.setattr("torch.backends.mps.is_available", lambda: False)
+        monkeypatch.setattr("cellpose.core.assign_device", lambda **kwargs: (torch.device("cpu"), False))
+
 
 @pytest.fixture
 def viewer_widget(make_napari_viewer: Callable[..., napari.Viewer]):
@@ -32,11 +37,7 @@ def test_basic_function(qtbot, viewer_widget):
     viewer.open_sample(PLUGIN_NAME, 'rgb_2D')
     viewer.layers[0].data = viewer.layers[0].data[0:128, 0:128]
 
-    #if os.getenv("CI"):
-    #    return
-        # actually running cellpose like this takes too long and always timesout on CI
-        # need to figure out better strategy
-
+    widget.model_type.value = "cyto3"
     widget()  # run segmentation with all default parameters
 
     def check_widget():
@@ -47,10 +48,9 @@ def test_basic_function(qtbot, viewer_widget):
     assert len(viewer.layers) == 5
     assert "cp_masks" in viewer.layers[-1].name
 
-    # check that the segmentation was proper, should yield 11 cells
+    # check that the segmentation was proper, cyto3 yields 10 cells
     assert viewer.layers[-1].data.max() == 10
 
-@pytest.mark.skipif(sys.platform.startswith('linux'), reason="ubuntu stalls with two cellpose tests")
 def test_compute_diameter(qtbot, viewer_widget):
     viewer, widget = viewer_widget
     viewer.open_sample(PLUGIN_NAME, 'rgb_2D')
@@ -63,9 +63,10 @@ def test_compute_diameter(qtbot, viewer_widget):
     with qtbot.waitSignal(widget.diameter.changed, timeout=60_000) as blocker:
         widget.compute_diameter_button.changed(None)
 
-    assert isclose(float(widget.diameter.value), 24.1, abs_tol=10**-1)
+    # local on macOS with MPS, get 20.37, with CPU-only it's 20.83, same as CI
+    # so choosing a target that works for both
+    assert isclose(float(widget.diameter.value), 20.6, abs_tol=0.3)
 
-@pytest.mark.skipif(sys.platform.startswith('linux'), reason="ubuntu stalls with >1 cellpose tests")
 def test_3D_segmentation(qtbot,  viewer_widget):
     viewer, widget = viewer_widget
     # by default the widget loads with `process_3D` set to False
@@ -75,6 +76,7 @@ def test_3D_segmentation(qtbot,  viewer_widget):
     # check that 3D processing is set correctly after opening a 3D image
     assert widget.process_3D.value == True
 
+    widget.model_type.value = "cyto3"
     widget()  # run segmentation with all default parameters
 
     def check_widget():
@@ -85,5 +87,5 @@ def test_3D_segmentation(qtbot,  viewer_widget):
     assert len(viewer.layers) == 5
     assert "cp_masks" in viewer.layers[-1].name
 
-    # check that the segmentation was proper, should yield 7 cells
-    assert viewer.layers[-1].data.max() == 7
+    # check that the segmentation was proper, `cyto3` should yield 9 cells
+    assert viewer.layers[-1].data.max() == 9

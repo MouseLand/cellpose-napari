@@ -73,6 +73,8 @@ def widget_wrapper():
             CP = models.CellposeModel(pretrained_model=custom_model, gpu=True)
         else:
             CP = models.CellposeModel(model_type=model_type, gpu=True)
+
+        print(cellprob_threshold, flow_threshold)
         masks, flows_orig, _ = CP.eval(image, 
                                     channels=channels, 
                                     channel_axis=channel_axis,
@@ -105,22 +107,16 @@ def widget_wrapper():
 
     @thread_worker 
     def compute_masks(masks_orig, flows_orig, cellprob_threshold, flow_threshold):
-        import cv2
-        from cellpose.utils import fill_holes_and_remove_small_masks
-        from cellpose.dynamics import get_masks
-        from cellpose.transforms import resize_image
+        from cellpose.dynamics import resize_and_compute_masks
 
-        #print(flows_orig[3].shape, flows_orig[2].shape, masks_orig.shape)
         flow_threshold = (31.0 - flow_threshold) / 10.
         if flow_threshold==0.0:
             flow_threshold = 0.0
             logger.debug('flow_threshold=0 => no masks thrown out due to model mismatch')
         logger.debug(f'computing masks with cellprob_threshold={cellprob_threshold}, flow_threshold={flow_threshold}')
-        maski = get_masks(flows_orig[3].copy(), iscell=(flows_orig[2] > cellprob_threshold),
-                        flows=flows_orig[1], threshold=flow_threshold*(masks_orig.ndim<3))
-        maski = fill_holes_and_remove_small_masks(maski)
-        maski = resize_image(maski, masks_orig.shape[-2], masks_orig.shape[-1],
-                                        interpolation=cv2.INTER_NEAREST)
+        maski, _ = resize_and_compute_masks(flows_orig[1], cellprob=flows_orig[2], cellprob_threshold=cellprob_threshold,
+                        flow_threshold=flow_threshold, resize=(masks_orig.shape[-2], masks_orig.shape[-1]))
+        
         return maski 
 
     @magicgui(
