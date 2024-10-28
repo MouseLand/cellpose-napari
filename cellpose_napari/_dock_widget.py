@@ -175,6 +175,7 @@ def widget_wrapper():
         def _new_layers(masks, flows_orig):
             from cellpose.utils import masks_to_outlines
             from cellpose.transforms import resize_image
+            from cellpose_napari._label_painter import activate_label_painter
             import cv2
 
             flows = resize_image(flows_orig[0], masks.shape[-2], masks.shape[-1],
@@ -211,6 +212,16 @@ def widget_wrapper():
                 layers.append(viewer.add_labels(outlines, name=image_layer.name + '_cp_outlines' + widget.iseg, visible=False, scale=physical_scale))
             layers.append(viewer.add_labels(masks, name=image_layer.name + '_cp_masks' + widget.iseg, visible=False, scale=physical_scale))
             widget.cellpose_layers.append(layers)
+
+            (widget.label_painter, labels_layer) = activate_label_painter(viewer, image_layer)
+            widget.cellpose_layers.append(labels_layer)
+
+            def custom_hide_event(event):
+                widget.label_painter.disconnect()
+                event.accept()
+
+            # Attach the custom hide event handler to the native widget
+            widget.native.hideEvent = custom_hide_event
 
         def _new_segmentation(segmentation):
             masks, flows_orig = segmentation
@@ -330,7 +341,7 @@ def widget_wrapper():
             _report_diameter(diam)
         else:
             logger.error('no square or circle shapes created')
-
+            
     return widget            
 
 
